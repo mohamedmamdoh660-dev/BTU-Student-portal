@@ -249,8 +249,12 @@ export default function RegisterPage() {
             setError("Please select an education level.");
             return false;
         }
-        if (!formData.highSchoolCountry || !formData.highSchoolName || !formData.highSchoolGpa) {
+        if (!formData.highSchoolCountry || !formData.highSchoolName) {
             setError("High School Details are required.");
+            return false;
+        }
+        if (formData.highSchoolType === "Diploma" && !formData.highSchoolGpa) {
+            setError("Diploma Grade is required.");
             return false;
         }
         if (formData.highSchoolType === "TR-YÖS" && !formData.yosDegree) {
@@ -741,10 +745,7 @@ export default function RegisterPage() {
                                                 {countries.map(c => <option key={c.id} value={c.id}>{c.name}</option>)}
                                             </select>
                                         </div>
-                                        <div className="space-y-2">
-                                            <label className="text-xs font-bold text-white/70 uppercase tracking-widest">{t('register.diplomaGradeExample')} *</label>
-                                            <input name="highSchoolGpa" value={formData.highSchoolGpa} onChange={handleChange} className="w-full h-12 bg-white/5 border border-white/10 rounded-xl px-4 text-white focus:border-btuCyan outline-none" />
-                                        </div>
+
 
                                         <div className="space-y-2">
                                             <label className="text-xs font-bold text-white/70 uppercase tracking-widest">{t('register.highSchoolType')} *</label>
@@ -754,6 +755,13 @@ export default function RegisterPage() {
                                                 <option value="SAT">SAT</option>
                                             </select>
                                         </div>
+
+                                        {formData.highSchoolType === 'Diploma' && (
+                                            <div className="space-y-2">
+                                                <label className="text-xs font-bold text-white/70 uppercase tracking-widest">{t('register.diplomaGradeExample')} *</label>
+                                                <input name="highSchoolGpa" value={formData.highSchoolGpa} onChange={handleChange} className="w-full h-12 bg-white/5 border border-white/10 rounded-xl px-4 text-white focus:border-btuCyan outline-none" />
+                                            </div>
+                                        )}
 
                                         {formData.highSchoolType === 'TR-YÖS' && (
                                             <div className="space-y-2">

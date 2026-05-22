@@ -20,3 +20,4 @@
 - Removed the duplicate "Diploma Degree" field to streamline the form; only the "Diploma Grade" field is now used.
 - Improved the visibility and font colors in the Document Upload section (`src/components/ui/file-upload.tsx`) to look better on dark backgrounds.
 - Updated the document validation logic to make "High School Transcript" mandatory for everyone, and "High School Certificate" mandatory specifically when "Diploma" is selected (`src/app/register/page.tsx`).
+- Made the "Diploma Grade" field visible and required only when the "Diploma" High School Type is selected. It will no longer erroneously display for "TR-YÖS" or "SAT" (`src/app/register/page.tsx`).
