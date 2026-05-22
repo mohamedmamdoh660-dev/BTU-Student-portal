@@ -128,14 +128,14 @@ export default function StudentLoginPage() {
 
                         {/* Left Info Panel */}
                         <div className="w-full md:w-5/12 bg-white/5 p-6 sm:p-8 lg:p-10 border-b md:border-b-0 md:border-r border-white/10 flex flex-col justify-center">
-                            <h2 className="text-xl sm:text-2xl font-extrabold text-white mb-3 sm:mb-4">Application Status</h2>
+                            <h2 className="text-xl sm:text-2xl font-extrabold text-white mb-3 sm:mb-4">{t('auth.appStatusTitle')}</h2>
                             <p className="text-white/70 leading-relaxed text-sm sm:text-base mb-6 font-light">
-                                Sign in with your registered email and passport number to track your application, upload pending documents, and receive official updates from the admission committee.
+                                {t('auth.appStatusDesc')}
                             </p>
                             <ul className="space-y-3 sm:space-y-4 text-sm sm:text-base font-medium text-white/60">
-                                <li className="flex items-center gap-3"><div className="w-1.5 h-1.5 sm:w-2 sm:h-2 rounded-full bg-btuCyan shadow-[0_0_10px_#00acc9]"></div> Real-time tracking</li>
-                                <li className="flex items-center gap-3"><div className="w-1.5 h-1.5 sm:w-2 sm:h-2 rounded-full bg-btuCyan shadow-[0_0_10px_#00acc9]"></div> Secure document upload</li>
-                                <li className="flex items-center gap-3"><div className="w-1.5 h-1.5 sm:w-2 sm:h-2 rounded-full bg-btuCyan shadow-[0_0_10px_#00acc9]"></div> Offer letter management</li>
+                                <li className="flex items-center gap-3"><div className="w-1.5 h-1.5 sm:w-2 sm:h-2 rounded-full bg-btuCyan shadow-[0_0_10px_#00acc9]"></div> {t('auth.featureTracking')}</li>
+                                <li className="flex items-center gap-3"><div className="w-1.5 h-1.5 sm:w-2 sm:h-2 rounded-full bg-btuCyan shadow-[0_0_10px_#00acc9]"></div> {t('auth.featureUpload')}</li>
+                                <li className="flex items-center gap-3"><div className="w-1.5 h-1.5 sm:w-2 sm:h-2 rounded-full bg-btuCyan shadow-[0_0_10px_#00acc9]"></div> {t('auth.featureOffer')}</li>
                             </ul>
                         </div>
 
