@@ -33,7 +33,8 @@ export default function ApplicationDetailsPage() {
                         Program(name, Faculty(name), Language(name)),
                         Degree(name),
                         AcademicYear(name),
-                        Semester(name)
+                        Semester(name),
+                        preferenceOrder
                     `)
                     .eq('id', params.id as string)
                     .eq('studentId', studentId)
@@ -109,14 +110,24 @@ export default function ApplicationDetailsPage() {
                     <h1 className="text-2xl font-black text-[#0a0f1e] tracking-tight">Application Details</h1>
                     <p className="text-gray-500 text-sm mt-1 font-medium">Ref: <span className="text-btuCyan font-bold">{shortId}</span></p>
                 </div>
-                <Button 
-                    onClick={() => router.push('/dashboard')}
-                    variant="outline" 
-                    className="border-gray-200 text-gray-600 hover:bg-gray-50 bg-white font-bold h-9 px-4 rounded-lg shadow-sm text-xs"
-                >
-                    <ArrowLeft className="w-3.5 h-3.5 mr-1.5" />
-                    Back to Dashboard
-                </Button>
+                <div className="flex items-center gap-3">
+                    {stage === "PENDING REVIEW" && (
+                        <Button 
+                            onClick={() => router.push(`/dashboard/applications/${application.id}/edit`)}
+                            className="bg-btuCyan hover:bg-[#088ba3] text-white font-bold h-9 px-4 rounded-lg shadow-sm text-xs"
+                        >
+                            Edit Application
+                        </Button>
+                    )}
+                    <Button 
+                        onClick={() => router.push('/dashboard')}
+                        variant="outline" 
+                        className="border-gray-200 text-gray-600 hover:bg-gray-50 bg-white font-bold h-9 px-4 rounded-lg shadow-sm text-xs"
+                    >
+                        <ArrowLeft className="w-3.5 h-3.5 mr-1.5" />
+                        Back to Dashboard
+                    </Button>
+                </div>
             </div>
 
             <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
@@ -137,6 +148,7 @@ export default function ApplicationDetailsPage() {
                                 <DetailItem label="Faculty" value={application.Program?.Faculty?.name || 'N/A'} />
                                 <DetailItem label="Academic Year" value={application.AcademicYear?.name || 'N/A'} />
                                 <DetailItem label="Intake / Semester" value={application.Semester?.name || 'N/A'} />
+                                <DetailItem label="Preference Order" value={application.preferenceOrder ? `${application.preferenceOrder}${application.preferenceOrder === 1 ? 'st' : application.preferenceOrder === 2 ? 'nd' : 'rd'} Preference` : 'N/A'} />
                             </div>
                         </div>
                     </div>
