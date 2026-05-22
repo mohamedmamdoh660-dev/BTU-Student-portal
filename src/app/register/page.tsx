@@ -556,15 +556,7 @@ export default function RegisterPage() {
                                                 <input type="radio" name="haveTc" checked={formData.haveTc === "no"} onChange={() => handleRadio("haveTc", "no")} className="accent-btuCyan" /> {t('register.no')}</label>
                                         </div>
                                     </div>
-                                    <div className="space-y-2">
-                                        <label className="text-xs font-bold text-white/70 uppercase tracking-widest">{t('register.blueCard')} *</label>
-                                        <div className="flex gap-4">
-                                            <label className="flex items-center gap-2 text-white/80 cursor-pointer">
-                                                <input type="radio" name="blueCard" checked={formData.blueCard === "yes"} onChange={() => handleRadio("blueCard", "yes")} className="accent-btuCyan" /> {t('register.yes')}</label>
-                                            <label className="flex items-center gap-2 text-white/80 cursor-pointer">
-                                                <input type="radio" name="blueCard" checked={formData.blueCard === "no"} onChange={() => handleRadio("blueCard", "no")} className="accent-btuCyan" /> {t('register.no')}</label>
-                                        </div>
-                                    </div>
+
                                     
                                     {formData.haveTc === "yes" && (
                                         <div className="space-y-2 md:col-span-2">
