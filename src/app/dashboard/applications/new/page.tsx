@@ -25,6 +25,7 @@ export default function AddApplicationPage() {
     const [selectedSemester, setSelectedSemester] = useState("");
     const [selectedDegree, setSelectedDegree] = useState("");
     const [selectedProgram, setSelectedProgram] = useState("");
+    const [selectedPreference, setSelectedPreference] = useState("");
 
     useEffect(() => {
         const fetchInitialData = async () => {
@@ -116,7 +117,7 @@ export default function AddApplicationPage() {
 
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
-        if (!selectedYear || !selectedSemester || !selectedDegree || !selectedProgram) {
+        if (!selectedYear || !selectedSemester || !selectedDegree || !selectedProgram || !selectedPreference) {
             setError("Please fill out all fields before submitting.");
             return;
         }
@@ -140,6 +141,20 @@ export default function AddApplicationPage() {
                 return;
             }
 
+            // Check if preference is already used
+            const { data: existingPrefs, error: prefError } = await supabase
+                .from('Application')
+                .select('id')
+                .eq('studentId', studentData.id)
+                .eq('preferenceOrder', parseInt(selectedPreference))
+                .limit(1);
+
+            if (existingPrefs && existingPrefs.length > 0) {
+                setError(`You have already submitted an application as your ${selectedPreference}${selectedPreference === '1' ? 'st' : selectedPreference === '2' ? 'nd' : 'rd'} preference.`);
+                setSubmitting(false);
+                return;
+            }
+
             // Generate a random ID since Prisma @default(cuid()) doesn't run in Supabase REST API
             const newId = 'c' + Math.random().toString(36).substring(2, 10) + Math.random().toString(36).substring(2, 10) + Date.now().toString(36);
 
@@ -153,6 +168,7 @@ export default function AddApplicationPage() {
                     academicYearId: selectedYear,
                     semesterId: selectedSemester,
                     degreeId: selectedDegree,
+                    preferenceOrder: parseInt(selectedPreference),
                     stage: "Pending Review",
                     status: "New",
                     updatedAt: new Date().toISOString()
@@ -316,6 +332,25 @@ export default function AddApplicationPage() {
                             {selectedDegree && programs.length === 0 && (
                                 <p className="text-xs text-orange-500 mt-2 font-medium">No active programs found for this degree level.</p>
                             )}
+                        </div>
+
+                        {/* Row 4: Preference Order */}
+                        <div className="space-y-2">
+                            <label className="text-xs font-bold text-gray-500 tracking-wider uppercase flex items-center gap-2">
+                                <AlertCircle className="w-3.5 h-3.5 text-btuCyan" />
+                                Preference Order
+                            </label>
+                            <select 
+                                value={selectedPreference}
+                                onChange={(e) => setSelectedPreference(e.target.value)}
+                                className="w-full h-12 bg-gray-50 border border-gray-200 rounded-xl px-4 text-sm font-semibold text-[#0a0f1e] focus:ring-2 focus:ring-btuCyan/20 focus:border-btuCyan outline-none transition-all disabled:opacity-50"
+                                disabled={error.includes("maximum limit")}
+                            >
+                                <option value="" disabled>Select Preference Order</option>
+                                <option value="1">1st Preference (1. Tercih)</option>
+                                <option value="2">2nd Preference (2. Tercih)</option>
+                                <option value="3">3rd Preference (3. Tercih)</option>
+                            </select>
                         </div>
 
                         {/* Submit Action */}

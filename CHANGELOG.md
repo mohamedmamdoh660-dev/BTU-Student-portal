@@ -1,5 +1,12 @@
 # Changelog
 
+## [2026-05-22] - Application Preference Order Feature - Feature
+
+- Added a "Preference Order" dropdown to the Application creation form (`src/app/dashboard/applications/new/page.tsx`), allowing students to specify their 1st, 2nd, and 3rd preference.
+- Implemented validation to ensure a student cannot submit multiple applications with the same preference order.
+- Updated the applications table (`src/components/dashboard/ApplicationsTable.tsx`) to display the preference order and sort applications by preference.
+- Added translation strings for the preference feature across all supported languages in `src/lib/i18n/translations.ts`.
+
 ## [2026-05-22] - Login Page & Form Translations Fix - Localization
 
 - Updated Turkish translation strings in `src/lib/i18n/translations.ts` for "T.C. Vatandaşı mısınız?" to "Yabancı kimlik numarası var mı ?" and "T.C. Kimlik Numarası" to "Yabancı kimlik numarası".

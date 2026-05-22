@@ -27,9 +27,11 @@ export default function ApplicationsTable() {
                     academicYear:academicYearId(name),
                     semester:semesterId(name),
                     degree:degreeId(name),
-                    program:programId(name)
+                    program:programId(name),
+                    preferenceOrder
                 `)
-                .eq('studentId', studentId);
+                .eq('studentId', studentId)
+                .order('preferenceOrder', { ascending: true });
 
             if (data && !error) {
                 setApplications(data);
@@ -84,6 +86,7 @@ export default function ApplicationsTable() {
                         <thead>
                             <tr className="border-b-2 border-gray-100">
                                 <th className="pb-3 font-bold text-gray-400 text-[10px] tracking-wider px-3">#</th>
+                                <th className="pb-3 font-bold text-gray-400 text-[10px] tracking-wider px-3">{t('dashboard.tablePref')}</th>
                                 <th className="pb-3 font-bold text-gray-400 text-[10px] tracking-wider px-3">{t('dashboard.tableProgram')}</th>
                                 <th className="pb-3 font-bold text-gray-400 text-[10px] tracking-wider px-3">{t('dashboard.tableDegree')}</th>
                                 <th className="pb-3 font-bold text-gray-400 text-[10px] tracking-wider px-3">{t('dashboard.tableAcadYear')}</th>
@@ -97,6 +100,15 @@ export default function ApplicationsTable() {
                             {applications.map((app, index) => (
                                 <tr key={app.id} className="border-b border-gray-50 hover:bg-gray-50 transition-colors">
                                     <td className="py-3 px-3 text-gray-500">{index + 1}</td>
+                                    <td className="py-3 px-3">
+                                        {app.preferenceOrder ? (
+                                            <span className="bg-orange-50 text-orange-600 text-[10px] font-black px-2 py-1 rounded-md tracking-wider">
+                                                {app.preferenceOrder}. {t('dashboard.pref')}
+                                            </span>
+                                        ) : (
+                                            <span className="text-gray-400">-</span>
+                                        )}
+                                    </td>
                                     <td className="py-3 px-3 font-semibold">{app.program?.name || t('dashboard.notAvailable')}</td>
                                     <td className="py-3 px-3">
                                         <span className="bg-blue-50 text-btuCyan text-[9px] font-black px-2 py-1 rounded-md tracking-wider uppercase">
