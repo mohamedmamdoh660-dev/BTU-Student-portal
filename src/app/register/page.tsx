@@ -547,7 +547,7 @@ export default function RegisterPage() {
                                 </div>
 
                                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                                    <div className="space-y-2">
+                                    <div className="space-y-2 md:col-span-2">
                                         <label className="text-xs font-bold text-white/70 uppercase tracking-widest">{t('register.haveTc')} *</label>
                                         <div className="flex gap-4">
                                             <label className="flex items-center gap-2 text-white/80 cursor-pointer">

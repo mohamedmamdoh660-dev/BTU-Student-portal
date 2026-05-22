@@ -9,3 +9,7 @@
 ## [2026-05-22] - Remove Blue Card Field - UI Adjustment
 
 - Removed the "Mavi Kartınız var mı?" (Blue Card) radio button field and its options from the student registration form (`src/app/register/page.tsx`).
+
+## [2026-05-22] - Registration Form Layout Fix - Bug Fix
+
+- Fixed the UI grid layout issue when "Hayır" (No) is selected for the Foreign ID question by making the question field span two columns (`md:col-span-2`) in `src/app/register/page.tsx`.
