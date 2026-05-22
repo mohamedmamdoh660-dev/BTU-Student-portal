@@ -191,6 +191,15 @@ export default function RegisterPage() {
         const today = new Date();
         today.setHours(0, 0, 0, 0);
 
+        if (formData.dateOfBirth) {
+            const dob = new Date(formData.dateOfBirth);
+            const minDate = new Date(today.getFullYear() - 16, today.getMonth(), today.getDate());
+            if (dob > minDate) {
+                setError("You must be at least 16 years old to register.");
+                return false;
+            }
+        }
+
         if (formData.passportIssueDate) {
             const issueDate = new Date(formData.passportIssueDate);
             if (issueDate >= today) {
@@ -250,10 +259,6 @@ export default function RegisterPage() {
         }
         if (formData.highSchoolType === "SAT" && !formData.satDegree) {
             setError("SAT Degree is required.");
-            return false;
-        }
-        if (formData.highSchoolType === "Diploma" && !formData.diplomaDegree) {
-            setError("Diploma Degree is required.");
             return false;
         }
         setError("");
@@ -759,12 +764,6 @@ export default function RegisterPage() {
                                             <div className="space-y-2">
                                                 <label className="text-xs font-bold text-white/70 uppercase tracking-widest">{t('register.satDegreeLabel')} *</label>
                                                 <input name="satDegree" value={formData.satDegree} onChange={handleChange} className="w-full h-12 bg-white/5 border border-white/10 rounded-xl px-4 text-white focus:border-btuCyan outline-none" />
-                                            </div>
-                                        )}
-                                        {formData.highSchoolType === 'Diploma' && (
-                                            <div className="space-y-2">
-                                                <label className="text-xs font-bold text-white/70 uppercase tracking-widest">{t('register.diplomaDegreeLabel')} *</label>
-                                                <input name="diplomaDegree" value={formData.diplomaDegree} onChange={handleChange} className="w-full h-12 bg-white/5 border border-white/10 rounded-xl px-4 text-white focus:border-btuCyan outline-none" />
                                             </div>
                                         )}
 

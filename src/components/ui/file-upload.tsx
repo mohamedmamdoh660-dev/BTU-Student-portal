@@ -109,7 +109,7 @@ export const FileUpload: React.FC<FileUploadProps> = ({
 
     return (
         <div className="space-y-2">
-            <label className="text-sm font-medium">
+            <label className="text-sm font-medium text-white/90">
                 {label} {required && <span className="text-destructive">*</span>}
             </label>
 
@@ -154,10 +154,10 @@ export const FileUpload: React.FC<FileUploadProps> = ({
                     onDragLeave={handleDragLeave}
                     className={cn(
                         'relative border-2 border-dashed rounded-lg p-8 text-center transition-colors',
-                        isDragging && 'border-primary bg-primary/5',
-                        !isDragging && 'border-muted-foreground/30',
+                        isDragging && 'border-btuCyan bg-btuCyan/5',
+                        !isDragging && 'border-white/20',
                         disabled && 'opacity-50 cursor-not-allowed',
-                        !disabled && 'cursor-pointer hover:border-primary/50'
+                        !disabled && 'cursor-pointer hover:border-btuCyan/50'
                     )}
                 >
                     <input
@@ -167,11 +167,11 @@ export const FileUpload: React.FC<FileUploadProps> = ({
                         disabled={disabled}
                         className="absolute inset-0 w-full h-full opacity-0 cursor-pointer disabled:cursor-not-allowed"
                     />
-                    <Upload className="w-12 h-12 mx-auto mb-4 text-muted-foreground" />
-                    <p className="text-sm font-medium mb-1">
+                    <Upload className="w-12 h-12 mx-auto mb-4 text-white/50" />
+                    <p className="text-sm font-medium mb-1 text-white/80">
                         Drag and drop your file here, or click to browse
                     </p>
-                    <p className="text-xs text-muted-foreground">
+                    <p className="text-xs text-white/50">
                         Max file size: {maxSize}MB
                     </p>
                 </div>

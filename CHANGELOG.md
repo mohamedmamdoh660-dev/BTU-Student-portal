@@ -13,3 +13,9 @@
 ## [2026-05-22] - Registration Form Layout Fix - Bug Fix
 
 - Fixed the UI grid layout issue when "Hayır" (No) is selected for the Foreign ID question by making the question field span two columns (`md:col-span-2`) in `src/app/register/page.tsx`.
+
+## [2026-05-22] - Registration Enhancements & UI Fixes - Enhancements
+
+- Added age validation on the registration form to ensure applicants are at least 16 years old.
+- Removed the duplicate "Diploma Degree" field to streamline the form; only the "Diploma Grade" field is now used.
+- Improved the visibility and font colors in the Document Upload section (`src/components/ui/file-upload.tsx`) to look better on dark backgrounds.
