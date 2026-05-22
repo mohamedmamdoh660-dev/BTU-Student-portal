@@ -26,6 +26,7 @@ export default function ApplicationDetailsPage() {
                     .from('Application')
                     .select(`
                         id,
+                        appNumber,
                         stage,
                         status,
                         notes,
@@ -82,7 +83,7 @@ export default function ApplicationDetailsPage() {
         );
     }
 
-    const shortId = "BTU-" + application.id.substring(application.id.length - 6).toUpperCase();
+    const shortId = "BTU-" + String(application.appNumber).padStart(4, '0');
     const dateSubmitted = new Date(application.createdAt).toLocaleDateString('en-GB', { day: '2-digit', month: 'long', year: 'numeric' });
 
     // Determine Stage Color Theme

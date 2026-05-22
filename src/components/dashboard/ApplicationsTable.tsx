@@ -23,6 +23,7 @@ export default function ApplicationsTable() {
                 .from('Application')
                 .select(`
                     id,
+                    appNumber,
                     stage,
                     academicYear:academicYearId(name),
                     semester:semesterId(name),
@@ -121,7 +122,7 @@ export default function ApplicationsTable() {
                                         <StageBadge stage={app.stage} />
                                     </td>
                                     <td className="py-3 px-3 font-semibold text-gray-500 tracking-wider text-[10px]">
-                                        {t('dashboard.appPrefix')}{app.id.substring(app.id.length - 6).toUpperCase()}
+                                        {t('dashboard.appPrefix')}{String(app.appNumber).padStart(4, '0')}
                                     </td>
                                     <td className="py-3 px-3 flex justify-center">
                                         <Button 
