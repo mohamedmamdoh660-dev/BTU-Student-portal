@@ -293,7 +293,8 @@ export default function RegisterPage() {
     };
 
     const getDocumentRequiredList = () => {
-        const requiredDocs = ['personal_photo', 'passport_copy'];
+        const requiredDocs = ['personal_photo', 'passport_copy', 'high_school_transcript'];
+        if (formData.highSchoolType === 'Diploma') requiredDocs.push('high_school_certificate');
         if (formData.highSchoolType === 'TR-YÖS') requiredDocs.push('yos_certificate');
         if (formData.highSchoolType === 'SAT') requiredDocs.push('sat_certificate');
         if (formData.hasTomer && formData.hasTomer !== 'Hayır') requiredDocs.push('tomer_certificate');
@@ -869,7 +870,7 @@ export default function RegisterPage() {
                                     <div className="bg-white/5 rounded-xl border border-white/10 p-4">
                                         <FileUpload
                                             label={t('register.docHighSchoolCert')}
-                                            required={false}
+                                            required={formData.highSchoolType === 'Diploma'}
                                             accept="image/*,application/pdf"
                                             currentFile={documents.find(d => d.type === 'high_school_certificate') ? {
                                                 fileName: documents.find(d => d.type === 'high_school_certificate').file.name,
@@ -882,7 +883,7 @@ export default function RegisterPage() {
                                     <div className="bg-white/5 rounded-xl border border-white/10 p-4">
                                         <FileUpload
                                             label={t('register.docHighSchoolTrans')}
-                                            required={false}
+                                            required={true}
                                             accept="image/*,application/pdf"
                                             currentFile={documents.find(d => d.type === 'high_school_transcript') ? {
                                                 fileName: documents.find(d => d.type === 'high_school_transcript').file.name,

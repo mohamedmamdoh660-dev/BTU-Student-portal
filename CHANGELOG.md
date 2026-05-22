@@ -19,3 +19,4 @@
 - Added age validation on the registration form to ensure applicants are at least 16 years old.
 - Removed the duplicate "Diploma Degree" field to streamline the form; only the "Diploma Grade" field is now used.
 - Improved the visibility and font colors in the Document Upload section (`src/components/ui/file-upload.tsx`) to look better on dark backgrounds.
+- Updated the document validation logic to make "High School Transcript" mandatory for everyone, and "High School Certificate" mandatory specifically when "Diploma" is selected (`src/app/register/page.tsx`).
