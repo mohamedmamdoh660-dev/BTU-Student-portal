@@ -2,9 +2,10 @@
 
 import React, { useState, useEffect } from "react";
 import { useParams, useRouter } from "next/navigation";
-import { ArrowLeft, Loader2, BookOpen, Clock, AlertCircle, FileText, Calendar, Building, Globe, MessageSquare, GraduationCap, CheckCircle2 } from "lucide-react";
+import { ArrowLeft, Loader2, BookOpen, Clock, AlertCircle, FileText, Calendar, Building, Globe, MessageSquare, GraduationCap, CheckCircle2, Upload } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { supabase } from "@/lib/supabase";
+import { useLanguage } from "@/lib/i18n/LanguageContext";
 
 export default function ApplicationDetailsPage() {
     const params = useParams();
@@ -12,6 +13,11 @@ export default function ApplicationDetailsPage() {
     const [application, setApplication] = useState<any>(null);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState("");
+    const { t } = useLanguage();
+    const [orientationReceipt, setOrientationReceipt] = useState<File | null>(null);
+    const [tomerReceipt, setTomerReceipt] = useState<File | null>(null);
+    const [receiptsUploaded, setReceiptsUploaded] = useState(false);
+    const [uploadingReceipts, setUploadingReceipts] = useState(false);
 
     useEffect(() => {
         const fetchApplication = async () => {
@@ -44,6 +50,17 @@ export default function ApplicationDetailsPage() {
 
                 if (error || !data) {
                     throw new Error("Application not found or unauthorized access.");
+                }
+
+                // Check if receipts are already uploaded
+                const { data: docs } = await supabase
+                    .from('Document')
+                    .select('fileType')
+                    .eq('applicationId', params.id as string)
+                    .in('fileType', ['Oryantasyon Ücreti', 'TOMER Fee']);
+                
+                if (docs && docs.length >= 2) {
+                    setReceiptsUploaded(true);
                 }
 
                 setApplication(data);
@@ -103,6 +120,70 @@ export default function ApplicationDetailsPage() {
         iconColor = "text-blue-500";
     }
 
+    const handleUploadReceipts = async () => {
+        if (!orientationReceipt || !tomerReceipt) {
+            alert("Please select both receipts before uploading.");
+            return;
+        }
+
+        if (orientationReceipt.size > 2 * 1024 * 1024 || tomerReceipt.size > 2 * 1024 * 1024) {
+            alert(t('dashboard.maxSize') || "File size must be up to 2MB");
+            return;
+        }
+
+        setUploadingReceipts(true);
+        try {
+            const studentId = localStorage.getItem('studentId');
+            if (!studentId) throw new Error("Student ID missing");
+
+            const uploadFile = async (file: File, fileType: string) => {
+                const ext = file.name.substring(file.name.lastIndexOf('.'));
+                const finalFileName = `${fileType.replace(/[^a-zA-Z0-9]/g, '_')}${ext}`;
+                const storagePath = `students/${studentId}/${Date.now()}_${Math.random().toString(36).substring(2, 8)}_${finalFileName}`;
+
+                const { error: uploadError } = await supabase.storage
+                    .from('crm-uploads')
+                    .upload(storagePath, file);
+
+                if (uploadError) throw new Error(`Failed to upload ${fileType}: ${uploadError.message}`);
+                const { data: { publicUrl } } = supabase.storage.from('crm-uploads').getPublicUrl(storagePath);
+
+                const { error: docError } = await supabase.from('Document').insert({
+                    id: crypto.randomUUID(),
+                    studentId,
+                    applicationId: application.id,
+                    fileName: finalFileName,
+                    fileType,
+                    fileUrl: publicUrl,
+                    fileSize: file.size,
+                    metadata: { storagePath },
+                    updatedAt: new Date().toISOString()
+                });
+
+                if (docError) throw new Error(`Failed to save document record for ${fileType}`);
+            };
+
+            await uploadFile(orientationReceipt, 'Oryantasyon Ücreti');
+            await uploadFile(tomerReceipt, 'TOMER Fee');
+
+            // Update Application Stage
+            const { error: updateError } = await supabase.from('Application')
+                .update({ stage: 'Payment Uploaded' })
+                .eq('id', application.id);
+
+            if (updateError) throw new Error("Failed to update application status");
+
+            alert(t('dashboard.uploadReceiptsBtn') + " - Success!");
+            setReceiptsUploaded(true);
+            setApplication({ ...application, stage: 'Payment Uploaded' });
+        } catch (err: any) {
+            console.error("Upload error:", err);
+            alert(err.message || "An error occurred during upload.");
+        } finally {
+            setUploadingReceipts(false);
+        }
+    };
+
     return (
         <div className="w-full flex flex-col gap-6 max-w-5xl mx-auto pb-12">
             
@@ -154,6 +235,79 @@ export default function ApplicationDetailsPage() {
                             </div>
                         </div>
                     </div>
+                    {/* Conditional Acceptance Payment Uploads */}
+                    {stage === "CONDITIONAL ACCEPTANCE" && !receiptsUploaded && (
+                        <div className="bg-white rounded-2xl shadow-sm border border-orange-200 overflow-hidden">
+                            <div className="bg-orange-50 px-6 py-4 flex items-center gap-2 border-b border-orange-100">
+                                <AlertCircle className="w-5 h-5 text-orange-600" />
+                                <div>
+                                    <h2 className="text-sm font-bold text-orange-900 tracking-wide uppercase">{t('dashboard.conditionalUploadTitle') || 'Upload Payment Receipts'}</h2>
+                                    <p className="text-xs text-orange-700 font-medium mt-1">{t('dashboard.conditionalUploadDesc') || 'Upload both Oryantasyon Ücreti and TOMER Fee receipts to proceed.'}</p>
+                                </div>
+                            </div>
+                            <div className="p-6">
+                                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-6">
+                                    <div className="bg-gray-50 rounded-xl p-4 border border-gray-100">
+                                        <h3 className="text-xs font-bold text-gray-700 mb-3">{t('dashboard.orientationFee') || 'Oryantasyon Ücreti'}</h3>
+                                        {orientationReceipt ? (
+                                            <div className="flex items-center justify-between bg-purple-50 text-purple-700 px-3 py-2 rounded-lg border border-purple-100">
+                                                <span className="text-xs font-medium truncate flex-1 pr-2">{orientationReceipt.name}</span>
+                                                <button onClick={() => setOrientationReceipt(null)} className="text-purple-400 hover:text-purple-600 p-1">
+                                                    <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M6 18L18 6M6 6l12 12" /></svg>
+                                                </button>
+                                            </div>
+                                        ) : (
+                                            <label className="flex items-center justify-center gap-2 w-full px-4 py-3 bg-white text-gray-600 hover:bg-gray-50 hover:text-btuCyan border-2 border-dashed border-gray-200 hover:border-btuCyan rounded-xl cursor-pointer transition-colors">
+                                                <Upload className="w-4 h-4" />
+                                                <span className="text-xs font-bold">{t('dashboard.clickToUpload') || 'Click to browse'}</span>
+                                                <input 
+                                                    type="file" 
+                                                    className="hidden" 
+                                                    accept=".pdf,.jpg,.jpeg,.png" 
+                                                    onChange={e => e.target.files?.[0] && setOrientationReceipt(e.target.files[0])} 
+                                                />
+                                            </label>
+                                        )}
+                                    </div>
+                                    <div className="bg-gray-50 rounded-xl p-4 border border-gray-100">
+                                        <h3 className="text-xs font-bold text-gray-700 mb-3">{t('dashboard.tomerFee') || 'TOMER Fee'}</h3>
+                                        {tomerReceipt ? (
+                                            <div className="flex items-center justify-between bg-purple-50 text-purple-700 px-3 py-2 rounded-lg border border-purple-100">
+                                                <span className="text-xs font-medium truncate flex-1 pr-2">{tomerReceipt.name}</span>
+                                                <button onClick={() => setTomerReceipt(null)} className="text-purple-400 hover:text-purple-600 p-1">
+                                                    <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M6 18L18 6M6 6l12 12" /></svg>
+                                                </button>
+                                            </div>
+                                        ) : (
+                                            <label className="flex items-center justify-center gap-2 w-full px-4 py-3 bg-white text-gray-600 hover:bg-gray-50 hover:text-btuCyan border-2 border-dashed border-gray-200 hover:border-btuCyan rounded-xl cursor-pointer transition-colors">
+                                                <Upload className="w-4 h-4" />
+                                                <span className="text-xs font-bold">{t('dashboard.clickToUpload') || 'Click to browse'}</span>
+                                                <input 
+                                                    type="file" 
+                                                    className="hidden" 
+                                                    accept=".pdf,.jpg,.jpeg,.png" 
+                                                    onChange={e => e.target.files?.[0] && setTomerReceipt(e.target.files[0])} 
+                                                />
+                                            </label>
+                                        )}
+                                    </div>
+                                </div>
+                                <div className="flex justify-end">
+                                    <Button 
+                                        onClick={handleUploadReceipts}
+                                        disabled={uploadingReceipts || !orientationReceipt || !tomerReceipt}
+                                        className="bg-orange-600 hover:bg-orange-700 text-white font-bold px-6 py-2 h-auto rounded-lg shadow-sm transition-colors"
+                                    >
+                                        {uploadingReceipts ? (
+                                            <><Loader2 className="w-4 h-4 mr-2 animate-spin" /> {t('dashboard.uploading') || 'Uploading...'}</>
+                                        ) : (
+                                            <>{t('dashboard.uploadReceiptsBtn') || 'Submit Receipts'}</>
+                                        )}
+                                    </Button>
+                                </div>
+                            </div>
+                        </div>
+                    )}
                 </div>
 
                 {/* Right Column: Status & Notes */}

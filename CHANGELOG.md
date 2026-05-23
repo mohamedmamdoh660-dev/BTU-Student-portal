@@ -12,6 +12,13 @@
 - Updated maximum file upload size limit from 10MB to 2MB across all file upload components and translation strings.
 - Updated the Missing Documents multi-app selector to be unchecked by default instead of selecting all applications.
 
+## [2026-05-23] - Conditional Acceptance Receipts Upload - Enhancements/Fixes
+- Implemented a new UI block in the Application Details page (`[id]/page.tsx`) specifically for applications in the `Conditional Acceptance` stage.
+- Added functionality to upload two required receipts: `Oryantasyon Ücreti` and `TOMER Fee`.
+- Implemented file size validation (max 2MB) for the receipts.
+- Application stage automatically updates to `Payment Uploaded` upon successful upload of both receipts.
+- Added full multi-language translation support for the new receipts upload UI.
+
 ## [2026-05-23] - Missing Documents & Dashboard Improvements - Enhancements/Fixes
 - Redesigned the Missing Documents Upload UI to be significantly more compact, clean, and horizontal, aligning with modern dashboard aesthetics.
 - Hid the application selection checkboxes when the student has only one application requiring missing documents, auto-applying the upload to that single application.
