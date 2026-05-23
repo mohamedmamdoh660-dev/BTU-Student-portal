@@ -9,6 +9,7 @@
 - Fixed the APP ID formatting to use `appNumber` instead of the default ID.
 - Allowed students to edit their application data from the portal.
 - Fixed a 400 Bad Request error when saving uploaded missing documents due to schema mismatch.
+- Fixed 400 Bad Request error caused by missing `id` (cuid) and `updatedAt` constraints when inserting Documents via Supabase REST API.
 
 ## [2026-05-22] - Application Preference Order Feature - Feature
 
