@@ -3,6 +3,7 @@
 ## [2026-05-23] - Missing Documents & Dashboard Improvements - Enhancements/Fixes
 - Replaced the Semester column with Preference Order in the Dashboard Applications Table.
 - Implemented "Missing Documents" upload functionality directly inside the Student Portal.
+- Supported Dynamic Multi-File Upload for missing documents, which prompts the student for separate files based on the required missing documents, auto-naming and typing them just like the CRM.
 - Added a dedicated "Upload" button in the Dashboard table for applications in the "MISSING DOCUMENTS" stage.
 - Improved typography and contrast across dashboard tables and the sidebar for better visibility.
 - Prevented stage badges (like 'PENDING REVIEW') from wrapping into two lines.
