@@ -156,7 +156,7 @@ function StageBadge({ stage }: { stage: string }) {
     }
 
     return (
-        <span className={`text-[9px] font-black px-2 py-1 rounded-full tracking-wider uppercase shadow-sm ${styles}`}>
+        <span className={`text-[9px] font-black px-2 py-1 rounded-full tracking-wider uppercase shadow-sm whitespace-nowrap ${styles}`}>
             {stage || 'PENDING'}
         </span>
     );
