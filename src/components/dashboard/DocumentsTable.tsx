@@ -48,7 +48,7 @@ export default function DocumentsTable() {
                 app.stage && app.stage.toUpperCase() === 'MISSING DOCUMENTS' && app.missingDocs && app.missingDocs.length > 0
             );
             setMissingApps(appsWaiting);
-            setSelectedAppIds(appsWaiting.map(app => app.id));
+            setSelectedAppIds([]);
         }
 
         setLoading(false);
@@ -270,7 +270,7 @@ export default function DocumentsTable() {
                                         <label className="flex flex-col items-center justify-center p-6 border-2 border-dashed border-purple-200 rounded-lg bg-purple-50/50 cursor-pointer hover:border-purple-400 hover:bg-purple-50 transition-colors">
                                             <Upload className="w-6 h-6 text-purple-400 mb-2" />
                                             <span className="text-sm font-bold text-purple-600">{t('dashboard.clickToUpload') || 'Click to browse or drag file here'}</span>
-                                            <span className="text-xs font-medium text-purple-400 mt-1">{t('dashboard.maxSize') || 'PDF, JPG, PNG up to 10MB'}</span>
+                                            <span className="text-xs font-medium text-purple-400 mt-1">{t('dashboard.maxSize') || 'PDF, JPG, PNG up to 2MB'}</span>
                                             <input
                                                 type="file"
                                                 className="hidden"

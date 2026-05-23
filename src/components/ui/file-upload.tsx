@@ -20,7 +20,7 @@ export const FileUpload: React.FC<FileUploadProps> = ({
     onFileSelect,
     onFileRemove,
     accept = 'image/*,application/pdf',
-    maxSize = 10,
+    maxSize = 2,
     currentFile,
     label,
     required = false,

@@ -3,7 +3,9 @@
     "allow": [
       "Bash(npm run *)",
       "Bash(curl -s http://localhost:3000)",
-      "Bash(k6 run *)"
+      "Bash(k6 run *)",
+      "Bash(mkdir -p \"/Users/mdarwish/Personal/Daxow Apps /CRM/BTU student-portal/test-fixtures\")",
+      "Bash(python3 -c *)"
     ]
   }
 }

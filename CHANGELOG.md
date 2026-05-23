@@ -1,5 +1,9 @@
 # Changelog
 
+## [2026-05-23] - Update Max Upload Size - Fix
+- Updated maximum file upload size limit from 10MB to 2MB across all file upload components and translation strings.
+- Updated the Missing Documents multi-app selector to be unchecked by default instead of selecting all applications.
+
 ## [2026-05-23] - Missing Documents & Dashboard Improvements - Enhancements/Fixes
 - Refactored Missing Documents Upload logic: Moved from individual application detail pages to a centralized multi-app dashboard component.
 - Implemented propagation logic for Missing Documents: Students can now bulk-apply uploaded missing documents across multiple pending applications from the dashboard.
