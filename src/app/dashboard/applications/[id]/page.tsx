@@ -168,14 +168,14 @@ export default function ApplicationDetailsPage() {
 
             // Update Application Stage
             const { error: updateError } = await supabase.from('Application')
-                .update({ stage: 'Payment Uploaded' })
+                .update({ stage: 'Client Pay' })
                 .eq('id', application.id);
 
             if (updateError) throw new Error("Failed to update application status");
 
             alert(t('dashboard.uploadReceiptsBtn') + " - Success!");
             setReceiptsUploaded(true);
-            setApplication({ ...application, stage: 'Payment Uploaded' });
+            setApplication({ ...application, stage: 'Client Pay' });
         } catch (err: any) {
             console.error("Upload error:", err);
             alert(err.message || "An error occurred during upload.");

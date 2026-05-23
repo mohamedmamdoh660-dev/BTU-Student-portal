@@ -16,7 +16,7 @@
 - Implemented a new UI block in the Application Details page (`[id]/page.tsx`) specifically for applications in the `Conditional Acceptance` stage.
 - Added functionality to upload two required receipts: `Oryantasyon Ücreti` and `TOMER Fee`.
 - Implemented file size validation (max 2MB) for the receipts.
-- Application stage automatically updates to `Payment Uploaded` upon successful upload of both receipts.
+- Application stage automatically updates to `Client Pay` upon successful upload of both receipts, seamlessly triggering the `Received the payment` transition in the backend.
 - Added full multi-language translation support for the new receipts upload UI.
 
 ## [2026-05-23] - Missing Documents & Dashboard Improvements - Enhancements/Fixes
