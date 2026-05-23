@@ -1,5 +1,14 @@
 # Changelog
 
+## [2026-05-23] - Missing Documents & Dashboard Improvements - Enhancements/Fixes
+- Replaced the Semester column with Preference Order in the Dashboard Applications Table.
+- Implemented "Missing Documents" upload functionality directly inside the Student Portal.
+- Added a dedicated "Upload" button in the Dashboard table for applications in the "MISSING DOCUMENTS" stage.
+- Improved typography and contrast across dashboard tables and the sidebar for better visibility.
+- Prevented stage badges (like 'PENDING REVIEW') from wrapping into two lines.
+- Fixed the APP ID formatting to use `appNumber` instead of the default ID.
+- Allowed students to edit their application data from the portal.
+
 ## [2026-05-22] - Application Preference Order Feature - Feature
 
 - Added a "Preference Order" dropdown to the Application creation form (`src/app/dashboard/applications/new/page.tsx`), allowing students to specify their 1st, 2nd, and 3rd preference.
