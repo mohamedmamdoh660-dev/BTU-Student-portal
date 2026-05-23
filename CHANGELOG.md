@@ -1,6 +1,8 @@
 # Changelog
 
 ## [2026-05-23] - Missing Documents & Dashboard Improvements - Enhancements/Fixes
+- Refactored Missing Documents Upload logic: Moved from individual application detail pages to a centralized multi-app dashboard component.
+- Implemented propagation logic for Missing Documents: Students can now bulk-apply uploaded missing documents across multiple pending applications from the dashboard.
 - Replaced the Semester column with Preference Order in the Dashboard Applications Table.
 - Implemented "Missing Documents" upload functionality directly inside the Student Portal.
 - Supported Dynamic Multi-File Upload for missing documents, which prompts the student for separate files based on the required missing documents, auto-naming and typing them just like the CRM.

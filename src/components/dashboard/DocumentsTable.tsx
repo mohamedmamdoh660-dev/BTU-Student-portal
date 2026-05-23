@@ -1,7 +1,7 @@
 "use client";
 
-import React, { useState, useEffect } from "react";
-import { Download, FolderOpen, Loader2, Eye } from "lucide-react";
+import React, { useState, useEffect, useMemo } from "react";
+import { Download, FolderOpen, Loader2, Eye, AlertCircle, FileText, Upload, XCircle } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { supabase } from "@/lib/supabase";
 import { useLanguage } from "@/lib/i18n/LanguageContext";
@@ -9,30 +9,135 @@ import { useLanguage } from "@/lib/i18n/LanguageContext";
 export default function DocumentsTable() {
     const { t } = useLanguage();
     const [documents, setDocuments] = useState<any[]>([]);
+    const [missingApps, setMissingApps] = useState<any[]>([]);
     const [loading, setLoading] = useState(true);
 
-    useEffect(() => {
-        const fetchDocuments = async () => {
-            const studentId = localStorage.getItem('studentId');
-            if (!studentId) {
-                setLoading(false);
-                return;
-            }
+    const [missingDocsFiles, setMissingDocsFiles] = useState<Record<string, File>>({});
+    const [selectedAppIds, setSelectedAppIds] = useState<string[]>([]);
+    const [uploadingDocs, setUploadingDocs] = useState(false);
 
-            const { data, error } = await supabase
-                .from('Document')
-                .select('*')
-                .eq('studentId', studentId)
-                .order('createdAt', { ascending: false });
-
-            if (data && !error) {
-                setDocuments(data);
-            }
+    const fetchData = async () => {
+        setLoading(true);
+        const studentId = localStorage.getItem('studentId');
+        if (!studentId) {
             setLoading(false);
-        };
+            return;
+        }
 
-        fetchDocuments();
+        // Fetch Documents
+        const docsPromise = supabase
+            .from('Document')
+            .select('*')
+            .eq('studentId', studentId)
+            .order('createdAt', { ascending: false });
+
+        // Fetch Applications to find missing docs
+        const appsPromise = supabase
+            .from('Application')
+            .select('id, appNumber, stage, missingDocs')
+            .eq('studentId', studentId);
+
+        const [docsRes, appsRes] = await Promise.all([docsPromise, appsPromise]);
+
+        if (docsRes.data && !docsRes.error) {
+            setDocuments(docsRes.data);
+        }
+
+        if (appsRes.data && !appsRes.error) {
+            const appsWaiting = appsRes.data.filter(app => 
+                app.stage && app.stage.toUpperCase() === 'MISSING DOCUMENTS' && app.missingDocs && app.missingDocs.length > 0
+            );
+            setMissingApps(appsWaiting);
+            setSelectedAppIds(appsWaiting.map(app => app.id));
+        }
+
+        setLoading(false);
+    };
+
+    useEffect(() => {
+        fetchData();
     }, []);
+
+    const uniqueMissingDocs = useMemo(() => {
+        const docSet = new Set<string>();
+        missingApps.forEach(app => {
+            (app.missingDocs || []).forEach((doc: string) => docSet.add(doc));
+        });
+        return Array.from(docSet);
+    }, [missingApps]);
+
+    function getDocTypeAndName(missingDocName: string) {
+        const lower = missingDocName.toLowerCase();
+        if (lower.includes('passport')) return { fileType: 'passport', fileName: 'Passport' };
+        if (lower.includes('transcript')) return { fileType: 'high_school_transcript', fileName: 'High School Transcript' };
+        if (lower.includes('photo')) return { fileType: 'photo', fileName: 'Personal Photo' };
+        return { fileType: 'other', fileName: missingDocName };
+    }
+
+    const handleUploadMissingDocs = async () => {
+        if (uniqueMissingDocs.length === 0 || selectedAppIds.length === 0) return;
+        
+        // Ensure all are selected
+        const allSelected = uniqueMissingDocs.every((docName: string) => missingDocsFiles[docName]);
+        if (!allSelected) {
+            alert("Please select all required documents before uploading.");
+            return;
+        }
+
+        setUploadingDocs(true);
+        try {
+            const studentId = localStorage.getItem('studentId');
+            if (!studentId) throw new Error("Student ID missing");
+
+            for (const docName of uniqueMissingDocs) {
+                const file = missingDocsFiles[docName];
+                const { fileType, fileName } = getDocTypeAndName(docName);
+                const ext = file.name.substring(file.name.lastIndexOf('.'));
+                const finalFileName = `${fileName}${ext}`;
+                const storagePath = `students/${studentId}/${Date.now()}_${Math.random().toString(36).substring(2, 8)}_${finalFileName.replace(/[^a-zA-Z0-9.-]/g, '_')}`;
+
+                // Upload to Supabase Storage
+                const { error: uploadError } = await supabase.storage
+                    .from('crm-uploads')
+                    .upload(storagePath, file);
+
+                if (uploadError) throw new Error(`Failed to upload ${docName}: ${uploadError.message}`);
+
+                const { data: { publicUrl } } = supabase.storage.from('crm-uploads').getPublicUrl(storagePath);
+
+                // Save to Document table
+                const { error: docError } = await supabase.from('Document').insert({
+                    id: crypto.randomUUID(),
+                    studentId,
+                    applicationId: selectedAppIds[0] || null, // Link to first selected application 
+                    fileName: finalFileName,
+                    fileType,
+                    fileUrl: publicUrl,
+                    fileSize: file.size,
+                    metadata: { storagePath },
+                    updatedAt: new Date().toISOString()
+                });
+
+                if (docError) throw new Error(`Failed to save document record for ${docName}`);
+            }
+
+            // Update Application Stages
+            const { error: updateError } = await supabase.from('Application')
+                .update({ stage: 'Missing Uploaded' })
+                .in('id', selectedAppIds);
+
+            if (updateError) throw new Error("Failed to update application status");
+
+            alert(t('dashboard.submitDocs') + " - Success!");
+            setMissingDocsFiles({});
+            fetchData();
+        } catch (err: any) {
+            console.error("Upload error:", err);
+            alert(err.message || "An error occurred during upload.");
+        } finally {
+            setUploadingDocs(false);
+        }
+    };
 
     const handleView = (url: string) => {
         if (url) window.open(url, "_blank");
@@ -57,6 +162,18 @@ export default function DocumentsTable() {
         }
     };
 
+    const toggleAppSelection = (id: string) => {
+        setSelectedAppIds(prev => prev.includes(id) ? prev.filter(a => a !== id) : [...prev, id]);
+    };
+
+    const toggleAllApps = () => {
+        if (selectedAppIds.length === missingApps.length) {
+            setSelectedAppIds([]);
+        } else {
+            setSelectedAppIds(missingApps.map(a => a.id));
+        }
+    };
+
     return (
         <div className="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden mb-6">
             {/* Header */}
@@ -76,6 +193,123 @@ export default function DocumentsTable() {
                     {t('dashboard.docHint')}
                 </div>
             </div>
+
+            {/* Missing Documents Upload Section */}
+            {!loading && missingApps.length > 0 && uniqueMissingDocs.length > 0 && (
+                <div className="m-4 bg-purple-50 rounded-2xl shadow-sm border border-purple-200 overflow-hidden">
+                    <div className="bg-purple-600 px-6 py-4 flex items-center gap-2 text-white">
+                        <AlertCircle className="w-5 h-5" />
+                        <h2 className="text-sm font-bold tracking-widest uppercase">{t('dashboard.missingDocsTitle') || 'Action Required: Missing Documents'}</h2>
+                    </div>
+                    <div className="p-6 space-y-6">
+                        <p className="text-sm text-purple-900 font-medium">
+                            {t('dashboard.missingDocsDesc') || 'Your application is on hold. Please upload the following required documents to proceed:'}
+                        </p>
+                        
+                        {/* Propagation Checkboxes */}
+                        <div className="bg-white p-4 rounded-xl border border-purple-100">
+                            <div className="flex items-center justify-between mb-3 border-b border-purple-50 pb-2">
+                                <h3 className="text-sm font-bold text-purple-900">{t('dashboard.missingDocsApplyTo') || 'Apply to the following applications:'}</h3>
+                                <label className="flex items-center gap-2 text-sm font-semibold text-purple-700 cursor-pointer hover:text-purple-900">
+                                    <input 
+                                        type="checkbox" 
+                                        checked={selectedAppIds.length === missingApps.length}
+                                        onChange={toggleAllApps}
+                                        className="rounded border-purple-300 text-purple-600 focus:ring-purple-500 w-4 h-4"
+                                    />
+                                    {t('dashboard.selectAll') || 'Select All'}
+                                </label>
+                            </div>
+                            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                                {missingApps.map(app => (
+                                    <label key={app.id} className="flex items-center gap-3 p-3 bg-purple-50/50 rounded-lg border border-purple-100 cursor-pointer hover:bg-purple-50 transition-colors">
+                                        <input 
+                                            type="checkbox" 
+                                            checked={selectedAppIds.includes(app.id)}
+                                            onChange={() => toggleAppSelection(app.id)}
+                                            className="rounded border-purple-300 text-purple-600 focus:ring-purple-500 w-4 h-4"
+                                        />
+                                        <div className="flex flex-col">
+                                            <span className="text-sm font-bold text-purple-950">App: BTU-{String(app.appNumber).padStart(4, '0')}</span>
+                                            <span className="text-[10px] font-semibold text-purple-500 uppercase tracking-widest">{app.stage}</span>
+                                        </div>
+                                    </label>
+                                ))}
+                            </div>
+                        </div>
+
+                        {/* File Uploads */}
+                        <div className="space-y-4">
+                            {uniqueMissingDocs.map((docName: string) => (
+                                <div key={docName} className="p-4 bg-white rounded-xl border border-purple-100 shadow-sm">
+                                    <div className="flex items-center gap-2 mb-3">
+                                        <FileText className="w-4 h-4 text-purple-600" />
+                                        <h3 className="text-sm font-bold text-purple-950">{docName} <span className="text-red-500">*</span></h3>
+                                    </div>
+                                    
+                                    {missingDocsFiles[docName] ? (
+                                        <div className="flex items-center justify-between p-3 bg-purple-50 rounded-lg border border-purple-100">
+                                            <div className="flex-1 min-w-0 pr-4">
+                                                <p className="text-sm font-semibold text-purple-900 truncate">{missingDocsFiles[docName].name}</p>
+                                                <p className="text-xs text-purple-600/70">{(missingDocsFiles[docName].size / 1024).toFixed(1)} KB</p>
+                                            </div>
+                                            <Button
+                                                size="sm"
+                                                variant="ghost"
+                                                className="text-red-500 hover:text-red-700 hover:bg-red-50 h-8 w-8 p-0 shrink-0"
+                                                onClick={() => {
+                                                    const next = { ...missingDocsFiles };
+                                                    delete next[docName];
+                                                    setMissingDocsFiles(next);
+                                                }}
+                                            >
+                                                <XCircle className="w-5 h-5" />
+                                            </Button>
+                                        </div>
+                                    ) : (
+                                        <label className="flex flex-col items-center justify-center p-6 border-2 border-dashed border-purple-200 rounded-lg bg-purple-50/50 cursor-pointer hover:border-purple-400 hover:bg-purple-50 transition-colors">
+                                            <Upload className="w-6 h-6 text-purple-400 mb-2" />
+                                            <span className="text-sm font-bold text-purple-600">{t('dashboard.clickToUpload') || 'Click to browse or drag file here'}</span>
+                                            <span className="text-xs font-medium text-purple-400 mt-1">{t('dashboard.maxSize') || 'PDF, JPG, PNG up to 10MB'}</span>
+                                            <input
+                                                type="file"
+                                                className="hidden"
+                                                accept=".pdf,.jpg,.jpeg,.png"
+                                                onChange={e => {
+                                                    const file = e.target.files?.[0];
+                                                    if (file) {
+                                                        setMissingDocsFiles(prev => ({ ...prev, [docName]: file }));
+                                                    }
+                                                }}
+                                            />
+                                        </label>
+                                    )}
+                                </div>
+                            ))}
+                        </div>
+
+                        <div className="pt-2 flex justify-end">
+                            <Button
+                                onClick={handleUploadMissingDocs}
+                                disabled={uploadingDocs || selectedAppIds.length === 0 || !uniqueMissingDocs.every((doc: string) => missingDocsFiles[doc])}
+                                className="bg-purple-600 hover:bg-purple-700 text-white font-bold h-11 px-6 rounded-xl shadow-md transition-all"
+                            >
+                                {uploadingDocs ? (
+                                    <>
+                                        <Loader2 className="w-4 h-4 mr-2 animate-spin" />
+                                        {t('dashboard.uploading') || 'Uploading...'}
+                                    </>
+                                ) : (
+                                    <>
+                                        <Upload className="w-4 h-4 mr-2" />
+                                        {t('dashboard.submitDocs') || 'Submit Missing Documents'}
+                                    </>
+                                )}
+                            </Button>
+                        </div>
+                    </div>
+                </div>
+            )}
 
             {/* Table */}
             <div className="overflow-x-auto p-4">
