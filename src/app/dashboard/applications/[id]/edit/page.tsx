@@ -127,7 +127,7 @@ export default function EditApplicationPage() {
 
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
-        if (!selectedYear || !selectedSemester || !selectedDegree || !selectedProgram || !selectedPreference) {
+        if (!selectedYear || !selectedDegree || !selectedProgram || !selectedPreference) {
             setError("Please fill out all fields before submitting.");
             return;
         }
@@ -168,7 +168,7 @@ export default function EditApplicationPage() {
             }
 
             // Update existing Application
-            const { error: updateError } = await supabase
+            const { data: updateData, error: updateError } = await supabase
                 .from('Application')
                 .update({
                     programId: selectedProgram,
@@ -179,9 +179,17 @@ export default function EditApplicationPage() {
                     updatedAt: new Date().toISOString()
                 })
                 .eq('id', params.id as string)
-                .eq('studentId', studentData.id);
+                .eq('studentId', studentData.id)
+                .select(); // Ask Supabase to return the updated rows
 
             if (updateError) throw updateError;
+            
+            // If Supabase returns success but 0 rows updated, it's an RLS permission issue
+            if (!updateData || updateData.length === 0) {
+                setError("Failed to update! The database prevented the update. Please check Supabase RLS policies for 'Update'.");
+                setSubmitting(false);
+                return;
+            }
 
             setSuccess(true);
             setTimeout(() => {
@@ -257,7 +265,7 @@ export default function EditApplicationPage() {
                 <div className="p-8">
                     <form onSubmit={handleSubmit} className="flex flex-col gap-8">
                         
-                        {/* Row 1: Academic Year & Semester */}
+                        {/* Row 1: Academic Year & Degree */}
                         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                             <div className="space-y-2">
                                 <label className="text-xs font-bold text-gray-500 tracking-wider uppercase flex items-center gap-2">
@@ -279,41 +287,24 @@ export default function EditApplicationPage() {
 
                             <div className="space-y-2">
                                 <label className="text-xs font-bold text-gray-500 tracking-wider uppercase flex items-center gap-2">
-                                    <Calendar className="w-3.5 h-3.5 text-btuCyan" />
-                                    Intake / Semester
+                                    <GraduationCap className="w-3.5 h-3.5 text-btuCyan" />
+                                    Degree Level
                                 </label>
                                 <select 
-                                    value={selectedSemester}
-                                    onChange={(e) => setSelectedSemester(e.target.value)}
+                                    value={selectedDegree}
+                                    onChange={(e) => setSelectedDegree(e.target.value)}
                                     className="w-full h-12 bg-gray-50 border border-gray-200 rounded-xl px-4 text-sm font-semibold text-[#0a0f1e] focus:ring-2 focus:ring-btuCyan/20 focus:border-btuCyan outline-none transition-all disabled:opacity-50"
                                     disabled={error.includes("maximum limit")}
                                 >
-                                    <option value="" disabled>Select Semester</option>
-                                    {semesters.map(s => (
-                                        <option key={s.id} value={s.id}>{s.name}</option>
+                                    <option value="" disabled>Select Degree</option>
+                                    {degrees.map(d => (
+                                        <option key={d.id} value={d.id}>{d.name}</option>
                                     ))}
                                 </select>
                             </div>
                         </div>
 
-                        {/* Row 2: Degree */}
-                        <div className="space-y-2">
-                            <label className="text-xs font-bold text-gray-500 tracking-wider uppercase flex items-center gap-2">
-                                <GraduationCap className="w-3.5 h-3.5 text-btuCyan" />
-                                Degree Level
-                            </label>
-                            <select 
-                                value={selectedDegree}
-                                onChange={(e) => setSelectedDegree(e.target.value)}
-                                className="w-full h-12 bg-gray-50 border border-gray-200 rounded-xl px-4 text-sm font-semibold text-[#0a0f1e] focus:ring-2 focus:ring-btuCyan/20 focus:border-btuCyan outline-none transition-all disabled:opacity-50"
-                                disabled={error.includes("maximum limit")}
-                            >
-                                <option value="" disabled>Select Degree</option>
-                                {degrees.map(d => (
-                                    <option key={d.id} value={d.id}>{d.name}</option>
-                                ))}
-                            </select>
-                        </div>
+
 
                         {/* Row 3: Program */}
                         <div className="space-y-2">

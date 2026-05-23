@@ -91,7 +91,6 @@ export default function ApplicationsTable() {
                                 <th className="pb-3 font-bold text-gray-400 text-[10px] tracking-wider px-3">{t('dashboard.tableProgram')}</th>
                                 <th className="pb-3 font-bold text-gray-400 text-[10px] tracking-wider px-3">{t('dashboard.tableDegree')}</th>
                                 <th className="pb-3 font-bold text-gray-400 text-[10px] tracking-wider px-3">{t('dashboard.tableAcadYear')}</th>
-                                <th className="pb-3 font-bold text-gray-400 text-[10px] tracking-wider px-3">{t('dashboard.tableSemester')}</th>
                                 <th className="pb-3 font-bold text-gray-400 text-[10px] tracking-wider px-3">{t('dashboard.tableStage')}</th>
                                 <th className="pb-3 font-bold text-gray-400 text-[10px] tracking-wider px-3">{t('dashboard.tableAppId')}</th>
                                 <th className="pb-3 font-bold text-gray-400 text-[10px] tracking-wider px-3 text-center">{t('dashboard.tableActions')}</th>
@@ -117,7 +116,6 @@ export default function ApplicationsTable() {
                                         </span>
                                     </td>
                                     <td className="py-3 px-3 text-gray-600">{app.academicYear?.name || t('dashboard.notAvailable')}</td>
-                                    <td className="py-3 px-3 text-gray-600">{app.semester?.name || t('dashboard.notAvailable')}</td>
                                     <td className="py-3 px-3">
                                         <StageBadge stage={app.stage} />
                                     </td>

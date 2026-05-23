@@ -148,7 +148,6 @@ export default function ApplicationDetailsPage() {
                                 <DetailItem label="Language" value={application.Program?.Language?.name || 'N/A'} />
                                 <DetailItem label="Faculty" value={application.Program?.Faculty?.name || 'N/A'} />
                                 <DetailItem label="Academic Year" value={application.AcademicYear?.name || 'N/A'} />
-                                <DetailItem label="Intake / Semester" value={application.Semester?.name || 'N/A'} />
                                 <DetailItem label="Preference Order" value={application.preferenceOrder ? `${application.preferenceOrder}${application.preferenceOrder === 1 ? 'st' : application.preferenceOrder === 2 ? 'nd' : 'rd'} Preference` : 'N/A'} />
                             </div>
                         </div>
