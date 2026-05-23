@@ -8,6 +8,7 @@
 - Prevented stage badges (like 'PENDING REVIEW') from wrapping into two lines.
 - Fixed the APP ID formatting to use `appNumber` instead of the default ID.
 - Allowed students to edit their application data from the portal.
+- Fixed a 400 Bad Request error when saving uploaded missing documents due to schema mismatch.
 
 ## [2026-05-22] - Application Preference Order Feature - Feature
 

@@ -129,11 +129,12 @@ export default function ApplicationDetailsPage() {
                 // Save to Document table
                 const { error: docError } = await supabase.from('Document').insert({
                     studentId,
+                    applicationId: application.id,
                     fileName: finalFileName,
                     fileType,
                     fileUrl: publicUrl,
                     fileSize: file.size,
-                    storagePath
+                    metadata: { storagePath }
                 });
 
                 if (docError) throw new Error(`Failed to save document record for ${docName}`);
