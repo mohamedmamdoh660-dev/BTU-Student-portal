@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useState, useEffect } from "react";
-import { Eye, Plus, Loader2 } from "lucide-react";
+import { Eye, Plus, Loader2, Upload } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { supabase } from "@/lib/supabase";
 import { useLanguage } from "@/lib/i18n/LanguageContext";
@@ -122,7 +122,17 @@ export default function ApplicationsTable() {
                                     <td className="py-3 px-3 font-bold text-gray-700 tracking-wider text-[11px]">
                                         {t('dashboard.appPrefix')}{String(app.appNumber).padStart(4, '0')}
                                     </td>
-                                    <td className="py-3 px-3 flex justify-center">
+                                    <td className="py-3 px-3 flex justify-center gap-2">
+                                        {app.stage === 'MISSING DOCUMENTS' && (
+                                            <Button 
+                                                size="sm" 
+                                                className="bg-red-500 hover:bg-red-600 text-white h-7 px-3 rounded-md shadow-sm transition-colors gap-1.5 text-[10px] font-bold"
+                                                onClick={() => window.location.href = `/dashboard/applications/${app.id}`}
+                                            >
+                                                <Upload className="w-3 h-3" />
+                                                Upload
+                                            </Button>
+                                        )}
                                         <Button 
                                             size="sm" 
                                             className="bg-[#0a0f1e] hover:bg-btuCyan text-white h-7 px-3 rounded-md shadow-sm transition-colors gap-1.5 text-[10px] font-bold"
