@@ -62,7 +62,7 @@ export default function AddApplicationPage() {
 
                 // 2. Fetch Options
                 const [yearsRes, semestersRes, degreesRes] = await Promise.all([
-                    supabase.from('AcademicYear').select('id, name, isDefault, translations').eq('isActive', true).order('name', { ascending: false }),
+                    supabase.from('AcademicYear').select('id, name, isDefault').eq('isActive', true).order('name', { ascending: false }),
                     supabase.from('Semester').select('id, name, isDefault, translations').eq('isActive', true),
                     supabase.from('Degree').select('id, name, translations').eq('isActive', true).order('displayOrder', { ascending: true })
                 ]);
