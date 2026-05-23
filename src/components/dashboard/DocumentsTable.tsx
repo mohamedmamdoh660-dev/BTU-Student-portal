@@ -15,6 +15,7 @@ export default function DocumentsTable() {
     const [missingDocsFiles, setMissingDocsFiles] = useState<Record<string, File>>({});
     const [selectedAppIds, setSelectedAppIds] = useState<string[]>([]);
     const [uploadingDocs, setUploadingDocs] = useState(false);
+    const [showPropagationModal, setShowPropagationModal] = useState(false);
 
     const fetchData = async () => {
         setLoading(true);
@@ -73,6 +74,22 @@ export default function DocumentsTable() {
         if (lower.includes('photo')) return { fileType: 'photo', fileName: 'Personal Photo' };
         return { fileType: 'other', fileName: missingDocName };
     }
+
+    const handleInitialSubmit = () => {
+        if (uniqueMissingDocs.length === 0) return;
+        
+        const allSelected = uniqueMissingDocs.every((docName: string) => missingDocsFiles[docName]);
+        if (!allSelected) {
+            alert("Please select all required documents before uploading.");
+            return;
+        }
+
+        if (missingApps.length > 1) {
+            setShowPropagationModal(true);
+        } else {
+            handleUploadMissingDocs();
+        }
+    };
 
     const handleUploadMissingDocs = async () => {
         if (uniqueMissingDocs.length === 0 || selectedAppIds.length === 0) return;
@@ -202,46 +219,14 @@ export default function DocumentsTable() {
                         <h2 className="text-xs font-bold text-purple-900 tracking-wide uppercase">{t('dashboard.missingDocsTitle') || 'Action Required: Missing Documents'}</h2>
                     </div>
                     
-                    <div className="p-5 flex flex-col md:flex-row gap-6">
-                        {/* Left side: Instructions & Checkboxes */}
-                        <div className="flex-1 space-y-4">
-                            <p className="text-xs text-gray-600 font-medium">
-                                {t('dashboard.missingDocsDesc') || 'Your application is on hold. Please upload the following required documents to proceed:'}
-                            </p>
-                            
-                            {missingApps.length > 1 && (
-                                <div className="bg-gray-50 rounded-lg p-3 border border-gray-100">
-                                    <div className="flex items-center justify-between mb-2">
-                                        <span className="text-[11px] font-bold text-gray-700 uppercase tracking-wider">{t('dashboard.missingDocsApplyTo') || 'Apply to the following applications:'}</span>
-                                        <label className="flex items-center gap-1.5 text-[11px] font-bold text-purple-600 cursor-pointer hover:text-purple-700">
-                                            <input 
-                                                type="checkbox" 
-                                                checked={selectedAppIds.length === missingApps.length}
-                                                onChange={toggleAllApps}
-                                                className="rounded border-gray-300 text-purple-600 focus:ring-purple-500 w-3 h-3" 
-                                            />
-                                            {t('dashboard.selectAll') || 'Select All'}
-                                        </label>
-                                    </div>
-                                    <div className="flex flex-wrap gap-2">
-                                        {missingApps.map(app => (
-                                            <label key={app.id} className={`flex items-center gap-2 px-3 py-1.5 rounded-md border cursor-pointer transition-colors ${selectedAppIds.includes(app.id) ? 'bg-purple-100 border-purple-200' : 'bg-white border-gray-200 hover:border-purple-200'}`}>
-                                                <input 
-                                                    type="checkbox" 
-                                                    checked={selectedAppIds.includes(app.id)}
-                                                    onChange={() => toggleAppSelection(app.id)}
-                                                    className="rounded border-gray-300 text-purple-600 focus:ring-purple-500 w-3 h-3" 
-                                                />
-                                                <span className={`text-xs font-bold ${selectedAppIds.includes(app.id) ? 'text-purple-900' : 'text-gray-600'}`}>BTU-{String(app.appNumber).padStart(4, '0')}</span>
-                                            </label>
-                                        ))}
-                                    </div>
-                                </div>
-                            )}
-                        </div>
 
-                        {/* Right side: Uploads */}
-                        <div className="flex-[1.5] space-y-3">
+                    <div className="p-5 flex flex-col gap-4">
+                        <p className="text-xs text-gray-600 font-medium">
+                            {t('dashboard.missingDocsDesc') || 'Your application is on hold. Please upload the following required documents to proceed:'}
+                        </p>
+
+                        {/* Uploads */}
+                        <div className="space-y-3">
                             {uniqueMissingDocs.map((docName: string) => (
                                 <div key={docName} className="flex items-center justify-between p-2.5 bg-white border border-gray-200 rounded-lg shadow-sm hover:border-purple-300 transition-colors">
                                     <div className="flex items-center gap-2">
@@ -279,6 +264,10 @@ export default function DocumentsTable() {
                                                 onChange={e => {
                                                     const file = e.target.files?.[0];
                                                     if (file) {
+                                                        if (file.size > 2 * 1024 * 1024) {
+                                                            alert(t('dashboard.maxSize') || "File size must be up to 2MB");
+                                                            return;
+                                                        }
                                                         setMissingDocsFiles(prev => ({ ...prev, [docName]: file }));
                                                     }
                                                 }} 
@@ -290,8 +279,8 @@ export default function DocumentsTable() {
                             
                             <div className="pt-2 flex justify-end">
                                 <Button 
-                                    onClick={handleUploadMissingDocs}
-                                    disabled={uploadingDocs || selectedAppIds.length === 0 || !uniqueMissingDocs.every((doc: string) => missingDocsFiles[doc])}
+                                    onClick={handleInitialSubmit}
+                                    disabled={uploadingDocs || !uniqueMissingDocs.every((doc: string) => missingDocsFiles[doc])}
                                     className="bg-purple-600 hover:bg-purple-700 text-white text-xs font-bold h-8 px-4 rounded-md shadow-sm transition-all"
                                 >
                                     {uploadingDocs ? (
@@ -395,6 +384,53 @@ export default function DocumentsTable() {
                     </Button>
                 </div>
             </div>
+            {/* Propagation Modal */}
+            {showPropagationModal && (
+                <div className="fixed inset-0 z-[100] flex items-center justify-center bg-black/50 p-4">
+                    <div className="bg-white rounded-2xl p-6 max-w-md w-full shadow-xl">
+                        <h3 className="text-lg font-bold text-gray-900 mb-2">{t('dashboard.missingDocsApplyTo') || 'Apply to the following applications:'}</h3>
+                        <p className="text-sm text-gray-500 mb-4">{t('dashboard.missingDocsModalDesc') || 'Select which applications should receive these documents.'}</p>
+                        
+                        <div className="space-y-3 mb-6">
+                            <label className="flex items-center gap-2 cursor-pointer pb-2 border-b border-gray-100">
+                                <input 
+                                    type="checkbox" 
+                                    checked={selectedAppIds.length === missingApps.length}
+                                    onChange={toggleAllApps}
+                                    className="rounded border-gray-300 text-purple-600 focus:ring-purple-500 w-4 h-4" 
+                                />
+                                <span className="text-sm font-bold text-gray-700">{t('dashboard.selectAll') || 'Select All'}</span>
+                            </label>
+                            
+                            {missingApps.map(app => (
+                                <label key={app.id} className="flex items-center gap-3 p-3 bg-gray-50 rounded-lg border border-gray-100 cursor-pointer hover:bg-gray-100 transition-colors">
+                                    <input 
+                                        type="checkbox" 
+                                        checked={selectedAppIds.includes(app.id)}
+                                        onChange={() => toggleAppSelection(app.id)}
+                                        className="rounded border-gray-300 text-purple-600 focus:ring-purple-500 w-4 h-4" 
+                                    />
+                                    <span className="text-sm font-bold text-gray-800">BTU-{String(app.appNumber).padStart(4, '0')}</span>
+                                </label>
+                            ))}
+                        </div>
+                        
+                        <div className="flex justify-end gap-3">
+                            <Button variant="outline" onClick={() => setShowPropagationModal(false)}>{t('dashboard.cancel') || 'Cancel'}</Button>
+                            <Button 
+                                onClick={() => {
+                                    setShowPropagationModal(false);
+                                    handleUploadMissingDocs();
+                                }}
+                                disabled={selectedAppIds.length === 0}
+                                className="bg-purple-600 hover:bg-purple-700 text-white"
+                            >
+                                {t('dashboard.confirmUpload') || 'Confirm & Upload'}
+                            </Button>
+                        </div>
+                    </div>
+                </div>
+            )}
         </div>
     );
 }
