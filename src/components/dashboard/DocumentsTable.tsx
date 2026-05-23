@@ -90,12 +90,12 @@ export default function DocumentsTable() {
                 ) : (
                     <table className="w-full text-left border-collapse mb-4">
                         <thead>
-                            <tr className="border-b-2 border-gray-100">
-                                <th className="pb-3 font-bold text-gray-400 text-[10px] tracking-wider px-3">#</th>
-                                <th className="pb-3 font-bold text-gray-400 text-[10px] tracking-wider px-3">{t('dashboard.tableDocType')}</th>
-                                <th className="pb-3 font-bold text-gray-400 text-[10px] tracking-wider px-3">{t('dashboard.tableFileName')}</th>
-                                <th className="pb-3 font-bold text-gray-400 text-[10px] tracking-wider px-3 text-center">{t('dashboard.tableUploadDate')}</th>
-                                <th className="pb-3 font-bold text-gray-400 text-[10px] tracking-wider px-3 text-center">{t('dashboard.tableActions')}</th>
+                            <tr className="border-b-2 border-gray-200">
+                                <th className="pb-3 font-bold text-gray-600 text-[11px] tracking-wider px-3">#</th>
+                                <th className="pb-3 font-bold text-gray-600 text-[11px] tracking-wider px-3">{t('dashboard.tableDocType')}</th>
+                                <th className="pb-3 font-bold text-gray-600 text-[11px] tracking-wider px-3">{t('dashboard.tableFileName')}</th>
+                                <th className="pb-3 font-bold text-gray-600 text-[11px] tracking-wider px-3 text-center">{t('dashboard.tableUploadDate')}</th>
+                                <th className="pb-3 font-bold text-gray-600 text-[11px] tracking-wider px-3 text-center">{t('dashboard.tableActions')}</th>
                             </tr>
                         </thead>
                         <tbody className="text-xs font-medium text-[#0a0f1e]">
@@ -107,14 +107,14 @@ export default function DocumentsTable() {
 
                                 return (
                                     <tr key={doc.id} className="border-b border-gray-50 hover:bg-gray-50 transition-colors">
-                                        <td className="py-3 px-3 text-gray-500">{index + 1}</td>
+                                        <td className="py-3 px-3 text-gray-700 font-semibold">{index + 1}</td>
                                         <td className="py-3 px-3">
                                             <span className="text-btuCyan font-bold hover:underline cursor-pointer">
                                                 {doc.fileType || t('dashboard.fallbackDoc')}
                                             </span>
                                         </td>
                                         <td className="py-3 px-3">
-                                            <div className="flex items-center gap-1.5 text-gray-600 max-w-[200px] sm:max-w-[300px]">
+                                            <div className="flex items-center gap-1.5 text-gray-800 font-medium max-w-[200px] sm:max-w-[300px]">
                                                 <svg className="w-3.5 h-3.5 flex-shrink-0 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M7 21h10a2 2 0 002-2V9.414a1 1 0 00-.293-.707l-5.414-5.414A1 1 0 0012.586 3H7a2 2 0 00-2 2v14a2 2 0 002 2z"></path>
                                                 </svg>
@@ -122,7 +122,7 @@ export default function DocumentsTable() {
                                             </div>
                                         </td>
                                         <td className="py-3 px-3">
-                                            <div className="flex flex-col items-center justify-center text-[10px] text-gray-500 font-semibold gap-0.5">
+                                            <div className="flex flex-col items-center justify-center text-[11px] text-gray-700 font-semibold gap-0.5">
                                                 <CalendarIcon className="w-3 h-3 text-gray-400 mb-0.5" />
                                                 <span>{day}-{month}</span>
                                                 <span>{year}</span>

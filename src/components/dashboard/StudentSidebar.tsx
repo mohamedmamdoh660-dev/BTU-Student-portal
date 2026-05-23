@@ -138,7 +138,7 @@ export default function StudentSidebar() {
                                     <div className={`p-1.5 rounded-lg ${isActive ? 'bg-btuCyan/20 text-btuCyan' : 'bg-white/10'}`}>
                                         <Icon className="w-4 h-4" />
                                     </div>
-                                    <span className={`font-bold tracking-wider text-xs ${isActive ? 'text-[#0a0f1e]' : ''}`}>
+                                    <span className={`font-bold tracking-wider text-[13px] ${isActive ? 'text-[#0a0f1e]' : ''}`}>
                                         {section.title}
                                     </span>
                                 </div>
@@ -246,14 +246,14 @@ export default function StudentSidebar() {
 
 function InfoRow({ icon, label, value, isLast = false }: { icon: React.ReactNode, label: string, value: string, isLast?: boolean }) {
     return (
-        <div className={`flex flex-col py-3 px-5 hover:bg-white/5 transition-colors ${!isLast ? 'border-b border-white/5' : ''}`}>
-            <div className="flex items-center gap-2 mb-1 text-white/50">
-                <div className="text-btuCyan bg-btuCyan/10 p-1 rounded-md w-fit">
+        <div className={`flex flex-col py-3 px-5 hover:bg-white/5 transition-colors ${!isLast ? 'border-b border-white/10' : ''}`}>
+            <div className="flex items-center gap-2 mb-1.5 text-white/70">
+                <div className="text-btuCyan bg-btuCyan/10 p-1.5 rounded-md w-fit">
                     {React.cloneElement(icon as React.ReactElement<{ className?: string }>, { className: "w-3.5 h-3.5" })}
                 </div>
-                <span className="text-[9px] font-bold tracking-[0.15em] uppercase">{label}</span>
+                <span className="text-[10px] font-bold tracking-widest uppercase">{label}</span>
             </div>
-            <div className="pl-9 text-white font-medium text-sm">
+            <div className="pl-10 text-white font-semibold text-sm">
                 {value}
             </div>
         </div>

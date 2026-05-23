@@ -85,21 +85,21 @@ export default function ApplicationsTable() {
                 ) : (
                     <table className="w-full text-left border-collapse">
                         <thead>
-                            <tr className="border-b-2 border-gray-100">
-                                <th className="pb-3 font-bold text-gray-400 text-[10px] tracking-wider px-3">#</th>
-                                <th className="pb-3 font-bold text-gray-400 text-[10px] tracking-wider px-3">{t('dashboard.tablePref')}</th>
-                                <th className="pb-3 font-bold text-gray-400 text-[10px] tracking-wider px-3">{t('dashboard.tableProgram')}</th>
-                                <th className="pb-3 font-bold text-gray-400 text-[10px] tracking-wider px-3">{t('dashboard.tableDegree')}</th>
-                                <th className="pb-3 font-bold text-gray-400 text-[10px] tracking-wider px-3">{t('dashboard.tableAcadYear')}</th>
-                                <th className="pb-3 font-bold text-gray-400 text-[10px] tracking-wider px-3">{t('dashboard.tableStage')}</th>
-                                <th className="pb-3 font-bold text-gray-400 text-[10px] tracking-wider px-3">{t('dashboard.tableAppId')}</th>
-                                <th className="pb-3 font-bold text-gray-400 text-[10px] tracking-wider px-3 text-center">{t('dashboard.tableActions')}</th>
+                            <tr className="border-b-2 border-gray-200">
+                                <th className="pb-3 font-bold text-gray-600 text-[11px] tracking-wider px-3">#</th>
+                                <th className="pb-3 font-bold text-gray-600 text-[11px] tracking-wider px-3">{t('dashboard.tablePref')}</th>
+                                <th className="pb-3 font-bold text-gray-600 text-[11px] tracking-wider px-3">{t('dashboard.tableProgram')}</th>
+                                <th className="pb-3 font-bold text-gray-600 text-[11px] tracking-wider px-3">{t('dashboard.tableDegree')}</th>
+                                <th className="pb-3 font-bold text-gray-600 text-[11px] tracking-wider px-3">{t('dashboard.tableAcadYear')}</th>
+                                <th className="pb-3 font-bold text-gray-600 text-[11px] tracking-wider px-3">{t('dashboard.tableStage')}</th>
+                                <th className="pb-3 font-bold text-gray-600 text-[11px] tracking-wider px-3">{t('dashboard.tableAppId')}</th>
+                                <th className="pb-3 font-bold text-gray-600 text-[11px] tracking-wider px-3 text-center">{t('dashboard.tableActions')}</th>
                             </tr>
                         </thead>
                         <tbody className="text-xs font-medium text-[#0a0f1e]">
                             {applications.map((app, index) => (
-                                <tr key={app.id} className="border-b border-gray-50 hover:bg-gray-50 transition-colors">
-                                    <td className="py-3 px-3 text-gray-500">{index + 1}</td>
+                                <tr key={app.id} className="border-b border-gray-100 hover:bg-gray-50 transition-colors">
+                                    <td className="py-3 px-3 text-gray-700 font-semibold">{index + 1}</td>
                                     <td className="py-3 px-3">
                                         {app.preferenceOrder ? (
                                             <span className="bg-orange-50 text-orange-600 text-[10px] font-black px-2 py-1 rounded-md tracking-wider">
@@ -109,17 +109,17 @@ export default function ApplicationsTable() {
                                             <span className="text-gray-400">-</span>
                                         )}
                                     </td>
-                                    <td className="py-3 px-3 font-semibold">{app.program?.name || t('dashboard.notAvailable')}</td>
+                                    <td className="py-3 px-3 font-bold text-gray-900">{app.program?.name || t('dashboard.notAvailable')}</td>
                                     <td className="py-3 px-3">
                                         <span className="bg-blue-50 text-btuCyan text-[9px] font-black px-2 py-1 rounded-md tracking-wider uppercase">
                                             {app.degree?.name || t('dashboard.notAvailable')}
                                         </span>
                                     </td>
-                                    <td className="py-3 px-3 text-gray-600">{app.academicYear?.name || t('dashboard.notAvailable')}</td>
+                                    <td className="py-3 px-3 text-gray-800 font-semibold">{app.academicYear?.name || t('dashboard.notAvailable')}</td>
                                     <td className="py-3 px-3">
                                         <StageBadge stage={app.stage} />
                                     </td>
-                                    <td className="py-3 px-3 font-semibold text-gray-500 tracking-wider text-[10px]">
+                                    <td className="py-3 px-3 font-bold text-gray-700 tracking-wider text-[11px]">
                                         {t('dashboard.appPrefix')}{String(app.appNumber).padStart(4, '0')}
                                     </td>
                                     <td className="py-3 px-3 flex justify-center">
