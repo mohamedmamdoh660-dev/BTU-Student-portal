@@ -275,7 +275,7 @@ export default function EditApplicationPage() {
                                 <select 
                                     value={selectedYear}
                                     onChange={(e) => setSelectedYear(e.target.value)}
-                                    className="w-full h-12 bg-gray-50 border border-gray-200 rounded-xl px-4 text-sm font-semibold text-[#0a0f1e] focus:ring-2 focus:ring-btuCyan/20 focus:border-btuCyan outline-none transition-all disabled:opacity-50"
+                                    className="w-full h-12 bg-gray-50 border border-gray-200 rounded-xl px-4 text-sm font-semibold text-[#0a0f1e] focus:ring-2 focus:ring-btuCyan/20 focus:border-btuCyan outline-none transition-all disabled:opacity-50 [color-scheme:light]"
                                     disabled={error.includes("maximum limit")}
                                 >
                                     <option value="" disabled>Select Year</option>
@@ -293,7 +293,7 @@ export default function EditApplicationPage() {
                                 <select 
                                     value={selectedDegree}
                                     onChange={(e) => setSelectedDegree(e.target.value)}
-                                    className="w-full h-12 bg-gray-50 border border-gray-200 rounded-xl px-4 text-sm font-semibold text-[#0a0f1e] focus:ring-2 focus:ring-btuCyan/20 focus:border-btuCyan outline-none transition-all disabled:opacity-50"
+                                    className="w-full h-12 bg-gray-50 border border-gray-200 rounded-xl px-4 text-sm font-semibold text-[#0a0f1e] focus:ring-2 focus:ring-btuCyan/20 focus:border-btuCyan outline-none transition-all disabled:opacity-50 [color-scheme:light]"
                                     disabled={error.includes("maximum limit")}
                                 >
                                     <option value="" disabled>Select Degree</option>
@@ -315,7 +315,7 @@ export default function EditApplicationPage() {
                             <select 
                                 value={selectedProgram}
                                 onChange={(e) => setSelectedProgram(e.target.value)}
-                                className="w-full h-12 bg-gray-50 border border-gray-200 rounded-xl px-4 text-sm font-semibold text-[#0a0f1e] focus:ring-2 focus:ring-btuCyan/20 focus:border-btuCyan outline-none transition-all disabled:opacity-50"
+                                className="w-full h-12 bg-gray-50 border border-gray-200 rounded-xl px-4 text-sm font-semibold text-[#0a0f1e] focus:ring-2 focus:ring-btuCyan/20 focus:border-btuCyan outline-none transition-all disabled:opacity-50 [color-scheme:light]"
                                 disabled={!selectedDegree || error.includes("maximum limit")}
                             >
                                 <option value="" disabled>
@@ -341,7 +341,7 @@ export default function EditApplicationPage() {
                             <select 
                                 value={selectedPreference}
                                 onChange={(e) => setSelectedPreference(e.target.value)}
-                                className="w-full h-12 bg-gray-50 border border-gray-200 rounded-xl px-4 text-sm font-semibold text-[#0a0f1e] focus:ring-2 focus:ring-btuCyan/20 focus:border-btuCyan outline-none transition-all disabled:opacity-50"
+                                className="w-full h-12 bg-gray-50 border border-gray-200 rounded-xl px-4 text-sm font-semibold text-[#0a0f1e] focus:ring-2 focus:ring-btuCyan/20 focus:border-btuCyan outline-none transition-all disabled:opacity-50 [color-scheme:light]"
                                 disabled={error.includes("maximum limit")}
                             >
                                 <option value="" disabled>Select Preference Order</option>

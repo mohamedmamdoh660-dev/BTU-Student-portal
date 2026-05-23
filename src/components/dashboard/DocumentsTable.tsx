@@ -48,7 +48,7 @@ export default function DocumentsTable() {
                 app.stage && app.stage.toUpperCase() === 'MISSING DOCUMENTS' && app.missingDocs && app.missingDocs.length > 0
             );
             setMissingApps(appsWaiting);
-            setSelectedAppIds([]);
+            setSelectedAppIds(appsWaiting.length === 1 ? [appsWaiting[0].id] : []);
         }
 
         setLoading(false);
@@ -196,116 +196,111 @@ export default function DocumentsTable() {
 
             {/* Missing Documents Upload Section */}
             {!loading && missingApps.length > 0 && uniqueMissingDocs.length > 0 && (
-                <div className="m-4 bg-purple-50 rounded-2xl shadow-sm border border-purple-200 overflow-hidden">
-                    <div className="bg-purple-600 px-6 py-4 flex items-center gap-2 text-white">
-                        <AlertCircle className="w-5 h-5" />
-                        <h2 className="text-sm font-bold tracking-widest uppercase">{t('dashboard.missingDocsTitle') || 'Action Required: Missing Documents'}</h2>
+                <div className="m-4 bg-white rounded-xl border-l-4 border-l-purple-500 border-y border-y-gray-200 border-r border-r-gray-200 shadow-sm overflow-hidden">
+                    <div className="px-5 py-3 border-b border-gray-100 flex items-center gap-2 bg-purple-50/50">
+                        <AlertCircle className="w-4 h-4 text-purple-600" />
+                        <h2 className="text-xs font-bold text-purple-900 tracking-wide uppercase">{t('dashboard.missingDocsTitle') || 'Action Required: Missing Documents'}</h2>
                     </div>
-                    <div className="p-6 space-y-6">
-                        <p className="text-sm text-purple-900 font-medium">
-                            {t('dashboard.missingDocsDesc') || 'Your application is on hold. Please upload the following required documents to proceed:'}
-                        </p>
-                        
-                        {/* Propagation Checkboxes */}
-                        <div className="bg-white p-4 rounded-xl border border-purple-100">
-                            <div className="flex items-center justify-between mb-3 border-b border-purple-50 pb-2">
-                                <h3 className="text-sm font-bold text-purple-900">{t('dashboard.missingDocsApplyTo') || 'Apply to the following applications:'}</h3>
-                                <label className="flex items-center gap-2 text-sm font-semibold text-purple-700 cursor-pointer hover:text-purple-900">
-                                    <input 
-                                        type="checkbox" 
-                                        checked={selectedAppIds.length === missingApps.length}
-                                        onChange={toggleAllApps}
-                                        className="rounded border-purple-300 text-purple-600 focus:ring-purple-500 w-4 h-4"
-                                    />
-                                    {t('dashboard.selectAll') || 'Select All'}
-                                </label>
-                            </div>
-                            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-                                {missingApps.map(app => (
-                                    <label key={app.id} className="flex items-center gap-3 p-3 bg-purple-50/50 rounded-lg border border-purple-100 cursor-pointer hover:bg-purple-50 transition-colors">
-                                        <input 
-                                            type="checkbox" 
-                                            checked={selectedAppIds.includes(app.id)}
-                                            onChange={() => toggleAppSelection(app.id)}
-                                            className="rounded border-purple-300 text-purple-600 focus:ring-purple-500 w-4 h-4"
-                                        />
-                                        <div className="flex flex-col">
-                                            <span className="text-sm font-bold text-purple-950">App: BTU-{String(app.appNumber).padStart(4, '0')}</span>
-                                            <span className="text-[10px] font-semibold text-purple-500 uppercase tracking-widest">{app.stage}</span>
-                                        </div>
-                                    </label>
-                                ))}
-                            </div>
+                    
+                    <div className="p-5 flex flex-col md:flex-row gap-6">
+                        {/* Left side: Instructions & Checkboxes */}
+                        <div className="flex-1 space-y-4">
+                            <p className="text-xs text-gray-600 font-medium">
+                                {t('dashboard.missingDocsDesc') || 'Your application is on hold. Please upload the following required documents to proceed:'}
+                            </p>
+                            
+                            {missingApps.length > 1 && (
+                                <div className="bg-gray-50 rounded-lg p-3 border border-gray-100">
+                                    <div className="flex items-center justify-between mb-2">
+                                        <span className="text-[11px] font-bold text-gray-700 uppercase tracking-wider">{t('dashboard.missingDocsApplyTo') || 'Apply to the following applications:'}</span>
+                                        <label className="flex items-center gap-1.5 text-[11px] font-bold text-purple-600 cursor-pointer hover:text-purple-700">
+                                            <input 
+                                                type="checkbox" 
+                                                checked={selectedAppIds.length === missingApps.length}
+                                                onChange={toggleAllApps}
+                                                className="rounded border-gray-300 text-purple-600 focus:ring-purple-500 w-3 h-3" 
+                                            />
+                                            {t('dashboard.selectAll') || 'Select All'}
+                                        </label>
+                                    </div>
+                                    <div className="flex flex-wrap gap-2">
+                                        {missingApps.map(app => (
+                                            <label key={app.id} className={`flex items-center gap-2 px-3 py-1.5 rounded-md border cursor-pointer transition-colors ${selectedAppIds.includes(app.id) ? 'bg-purple-100 border-purple-200' : 'bg-white border-gray-200 hover:border-purple-200'}`}>
+                                                <input 
+                                                    type="checkbox" 
+                                                    checked={selectedAppIds.includes(app.id)}
+                                                    onChange={() => toggleAppSelection(app.id)}
+                                                    className="rounded border-gray-300 text-purple-600 focus:ring-purple-500 w-3 h-3" 
+                                                />
+                                                <span className={`text-xs font-bold ${selectedAppIds.includes(app.id) ? 'text-purple-900' : 'text-gray-600'}`}>BTU-{String(app.appNumber).padStart(4, '0')}</span>
+                                            </label>
+                                        ))}
+                                    </div>
+                                </div>
+                            )}
                         </div>
 
-                        {/* File Uploads */}
-                        <div className="space-y-4">
+                        {/* Right side: Uploads */}
+                        <div className="flex-[1.5] space-y-3">
                             {uniqueMissingDocs.map((docName: string) => (
-                                <div key={docName} className="p-4 bg-white rounded-xl border border-purple-100 shadow-sm">
-                                    <div className="flex items-center gap-2 mb-3">
-                                        <FileText className="w-4 h-4 text-purple-600" />
-                                        <h3 className="text-sm font-bold text-purple-950">{docName} <span className="text-red-500">*</span></h3>
+                                <div key={docName} className="flex items-center justify-between p-2.5 bg-white border border-gray-200 rounded-lg shadow-sm hover:border-purple-300 transition-colors">
+                                    <div className="flex items-center gap-2">
+                                        <FileText className="w-4 h-4 text-gray-400" />
+                                        <span className="text-xs font-bold text-gray-800">{docName} <span className="text-red-500">*</span></span>
                                     </div>
                                     
                                     {missingDocsFiles[docName] ? (
-                                        <div className="flex items-center justify-between p-3 bg-purple-50 rounded-lg border border-purple-100">
-                                            <div className="flex-1 min-w-0 pr-4">
-                                                <p className="text-sm font-semibold text-purple-900 truncate">{missingDocsFiles[docName].name}</p>
-                                                <p className="text-xs text-purple-600/70">{(missingDocsFiles[docName].size / 1024).toFixed(1)} KB</p>
+                                        <div className="flex items-center gap-3">
+                                            <div className="flex flex-col items-end">
+                                                <span className="text-[11px] font-bold text-purple-700 truncate max-w-[120px]">{missingDocsFiles[docName].name}</span>
+                                                <span className="text-[9px] text-gray-400 font-medium">{(missingDocsFiles[docName].size / 1024).toFixed(1)} KB</span>
                                             </div>
-                                            <Button
-                                                size="sm"
-                                                variant="ghost"
-                                                className="text-red-500 hover:text-red-700 hover:bg-red-50 h-8 w-8 p-0 shrink-0"
+                                            <Button 
+                                                size="sm" 
+                                                variant="ghost" 
                                                 onClick={() => {
                                                     const next = { ...missingDocsFiles };
                                                     delete next[docName];
                                                     setMissingDocsFiles(next);
-                                                }}
+                                                }} 
+                                                className="h-6 w-6 p-0 text-red-500 hover:text-red-700 hover:bg-red-50 rounded-full shrink-0"
                                             >
-                                                <XCircle className="w-5 h-5" />
+                                                <XCircle className="w-4 h-4" />
                                             </Button>
                                         </div>
                                     ) : (
-                                        <label className="flex flex-col items-center justify-center p-6 border-2 border-dashed border-purple-200 rounded-lg bg-purple-50/50 cursor-pointer hover:border-purple-400 hover:bg-purple-50 transition-colors">
-                                            <Upload className="w-6 h-6 text-purple-400 mb-2" />
-                                            <span className="text-sm font-bold text-purple-600">{t('dashboard.clickToUpload') || 'Click to browse or drag file here'}</span>
-                                            <span className="text-xs font-medium text-purple-400 mt-1">{t('dashboard.maxSize') || 'PDF, JPG, PNG up to 2MB'}</span>
-                                            <input
-                                                type="file"
-                                                className="hidden"
-                                                accept=".pdf,.jpg,.jpeg,.png"
+                                        <label className="flex items-center gap-1.5 px-3 py-1.5 bg-purple-50 text-purple-700 hover:bg-purple-100 rounded-md cursor-pointer transition-colors text-[11px] font-bold shrink-0">
+                                            <Upload className="w-3.5 h-3.5" />
+                                            {t('dashboard.clickToUpload') || 'Browse'}
+                                            <input 
+                                                type="file" 
+                                                className="hidden" 
+                                                accept=".pdf,.jpg,.jpeg,.png" 
                                                 onChange={e => {
                                                     const file = e.target.files?.[0];
                                                     if (file) {
                                                         setMissingDocsFiles(prev => ({ ...prev, [docName]: file }));
                                                     }
-                                                }}
+                                                }} 
                                             />
                                         </label>
                                     )}
                                 </div>
                             ))}
-                        </div>
-
-                        <div className="pt-2 flex justify-end">
-                            <Button
-                                onClick={handleUploadMissingDocs}
-                                disabled={uploadingDocs || selectedAppIds.length === 0 || !uniqueMissingDocs.every((doc: string) => missingDocsFiles[doc])}
-                                className="bg-purple-600 hover:bg-purple-700 text-white font-bold h-11 px-6 rounded-xl shadow-md transition-all"
-                            >
-                                {uploadingDocs ? (
-                                    <>
-                                        <Loader2 className="w-4 h-4 mr-2 animate-spin" />
-                                        {t('dashboard.uploading') || 'Uploading...'}
-                                    </>
-                                ) : (
-                                    <>
-                                        <Upload className="w-4 h-4 mr-2" />
-                                        {t('dashboard.submitDocs') || 'Submit Missing Documents'}
-                                    </>
-                                )}
-                            </Button>
+                            
+                            <div className="pt-2 flex justify-end">
+                                <Button 
+                                    onClick={handleUploadMissingDocs}
+                                    disabled={uploadingDocs || selectedAppIds.length === 0 || !uniqueMissingDocs.every((doc: string) => missingDocsFiles[doc])}
+                                    className="bg-purple-600 hover:bg-purple-700 text-white text-xs font-bold h-8 px-4 rounded-md shadow-sm transition-all"
+                                >
+                                    {uploadingDocs ? (
+                                        <><Loader2 className="w-3 h-3 mr-2 animate-spin" /> {t('dashboard.uploading') || 'Uploading...'}</>
+                                    ) : (
+                                        <>{t('dashboard.submitDocs') || 'Submit Missing Documents'}</>
+                                    )}
+                                </Button>
+                            </div>
                         </div>
                     </div>
                 </div>

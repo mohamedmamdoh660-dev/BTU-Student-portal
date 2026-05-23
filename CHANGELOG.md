@@ -1,10 +1,21 @@
 # Changelog
 
-## [2026-05-23] - Update Max Upload Size - Fix
+## [2026-05-23] - Application Form Localization
+- Translated all UI labels, form options, error states, and submission messages on the "New Application" form into all supported languages (EN, TR, AR, FR, RU).
+- Updated the form's data-fetching logic to dynamically request and display the translated names for degrees, programs, academic years, and faculties, gracefully falling back to the English names if the specific translated string is empty.
+
+
+## [2026-05-23] - Update Max Upload Size & UI Fixes
+- Fixed a bug where dropdown menus (both Language Switcher and Form Selects) appeared with white text on a white background on some OS modes (e.g., iOS/macOS Dark Mode).
+- Added `variant` prop to `LanguageSwitcher` to improve visibility on light backgrounds.
+- Enforced correct `color-scheme` on all native `<select>` dropdowns across Light/Dark layouts.
 - Updated maximum file upload size limit from 10MB to 2MB across all file upload components and translation strings.
 - Updated the Missing Documents multi-app selector to be unchecked by default instead of selecting all applications.
 
 ## [2026-05-23] - Missing Documents & Dashboard Improvements - Enhancements/Fixes
+- Redesigned the Missing Documents Upload UI to be significantly more compact, clean, and horizontal, aligning with modern dashboard aesthetics.
+- Hid the application selection checkboxes when the student has only one application requiring missing documents, auto-applying the upload to that single application.
+- Clarified that uploaded documents are treated as student-level assets and are only uploaded once to Supabase Storage, even if applied to multiple applications.
 - Refactored Missing Documents Upload logic: Moved from individual application detail pages to a centralized multi-app dashboard component.
 - Implemented propagation logic for Missing Documents: Students can now bulk-apply uploaded missing documents across multiple pending applications from the dashboard.
 - Replaced the Semester column with Preference Order in the Dashboard Applications Table.

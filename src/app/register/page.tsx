@@ -586,7 +586,7 @@ export default function RegisterPage() {
 
                                     <div className="space-y-2">
                                         <label className="text-xs font-bold text-white/70 uppercase tracking-widest">{t('register.gender')} *</label>
-                                        <select name="gender" value={formData.gender} onChange={handleChange} className="w-full h-12 bg-[#0f172a] border border-white/10 rounded-xl px-4 text-white focus:border-btuCyan outline-none">
+                                        <select name="gender" value={formData.gender} onChange={handleChange} className="w-full h-12 bg-[#0f172a] border border-white/10 rounded-xl px-4 text-white focus:border-btuCyan outline-none [color-scheme:dark]">
                                             <option value="" disabled>{t('register.selectGender')}</option>
                                             <option value="Male">{t('register.male')}</option>
                                             <option value="Female">{t('register.female')}</option>
@@ -599,7 +599,7 @@ export default function RegisterPage() {
 
                                     <div className="space-y-2">
                                         <label className="text-xs font-bold text-white/70 uppercase tracking-widest">{t('register.nationality')} *</label>
-                                        <select name="nationality" value={formData.nationality} onChange={handleChange} className="w-full h-12 bg-[#0f172a] border border-white/10 rounded-xl px-4 text-white focus:border-btuCyan outline-none">
+                                        <select name="nationality" value={formData.nationality} onChange={handleChange} className="w-full h-12 bg-[#0f172a] border border-white/10 rounded-xl px-4 text-white focus:border-btuCyan outline-none [color-scheme:dark]">
                                             <option value="" disabled>Select Nationality</option>
                                             {nationalities.map(c => <option key={c.id} value={c.id}>{c.name}</option>)}
                                         </select>
@@ -664,7 +664,7 @@ export default function RegisterPage() {
                                     </div>
                                     <div className="space-y-2">
                                         <label className="text-xs font-bold text-white/70 uppercase tracking-widest">{t('register.country')}</label>
-                                        <select name="addressCountry" value={formData.addressCountry} onChange={handleChange} className="w-full h-12 bg-[#0f172a] border border-white/10 rounded-xl px-4 text-white focus:border-btuCyan outline-none">
+                                        <select name="addressCountry" value={formData.addressCountry} onChange={handleChange} className="w-full h-12 bg-[#0f172a] border border-white/10 rounded-xl px-4 text-white focus:border-btuCyan outline-none [color-scheme:dark]">
                                             <option value="" disabled>Select Country</option>
                                             {countries.map(c => <option key={c.id} value={c.id}>{c.name}</option>)}
                                         </select>
@@ -722,7 +722,7 @@ export default function RegisterPage() {
                                     <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                                         <div className="space-y-2 md:col-span-2">
                                             <label className="text-xs font-bold text-btuCyan uppercase tracking-widest">{t('register.currentEducationLevel')} *</label>
-                                            <select name="educationLevelId" value={formData.educationLevelId} onChange={handleChange} className="w-full h-14 bg-btuCyan/10 border border-btuCyan/30 rounded-xl px-4 text-white font-bold focus:border-btuCyan outline-none">
+                                            <select name="educationLevelId" value={formData.educationLevelId} onChange={handleChange} className="w-full h-14 bg-btuCyan/10 border border-btuCyan/30 rounded-xl px-4 text-white font-bold focus:border-btuCyan outline-none [color-scheme:dark]">
                                                 <option value="high_school">High School</option>
                                                 <option value="bachelor">Bachelor's Degree</option>
                                                 <option value="master">Master's Degree</option>
@@ -740,7 +740,7 @@ export default function RegisterPage() {
                                         </div>
                                         <div className="space-y-2">
                                             <label className="text-xs font-bold text-white/70 uppercase tracking-widest">{t('register.country')} *</label>
-                                            <select name="highSchoolCountry" value={formData.highSchoolCountry} onChange={handleChange} className="w-full h-12 bg-[#0f172a] border border-white/10 rounded-xl px-4 text-white focus:border-btuCyan outline-none">
+                                            <select name="highSchoolCountry" value={formData.highSchoolCountry} onChange={handleChange} className="w-full h-12 bg-[#0f172a] border border-white/10 rounded-xl px-4 text-white focus:border-btuCyan outline-none [color-scheme:dark]">
                                                 <option value="" disabled>Select Country</option>
                                                 {countries.map(c => <option key={c.id} value={c.id}>{c.name}</option>)}
                                             </select>
@@ -749,7 +749,7 @@ export default function RegisterPage() {
 
                                         <div className="space-y-2">
                                             <label className="text-xs font-bold text-white/70 uppercase tracking-widest">{t('register.highSchoolType')} *</label>
-                                            <select name="highSchoolType" value={formData.highSchoolType} onChange={handleChange} className="w-full h-12 bg-[#0f172a] border border-white/10 rounded-xl px-4 text-white focus:border-btuCyan outline-none">
+                                            <select name="highSchoolType" value={formData.highSchoolType} onChange={handleChange} className="w-full h-12 bg-[#0f172a] border border-white/10 rounded-xl px-4 text-white focus:border-btuCyan outline-none [color-scheme:dark]">
                                                 <option value="Diploma">Diploma</option>
                                                 <option value="TR-YÖS">TR-YÖS</option>
                                                 <option value="SAT">SAT</option>
@@ -778,7 +778,7 @@ export default function RegisterPage() {
 
                                         <div className="space-y-2 md:col-span-2">
                                             <label className="text-xs font-bold text-white/70 uppercase tracking-widest">{t('register.hasTomerLabel')} *</label>
-                                            <select name="hasTomer" value={formData.hasTomer} onChange={handleChange} className="w-full h-12 bg-[#0f172a] border border-white/10 rounded-xl px-4 text-white focus:border-btuCyan outline-none">
+                                            <select name="hasTomer" value={formData.hasTomer} onChange={handleChange} className="w-full h-12 bg-[#0f172a] border border-white/10 rounded-xl px-4 text-white focus:border-btuCyan outline-none [color-scheme:dark]">
                                                 <option value="Hayır">Hayır (None)</option>
                                                 <option value="A1">A1</option>
                                                 <option value="A2">A2</option>
@@ -800,7 +800,7 @@ export default function RegisterPage() {
                                                 </div>
                                                 <div className="space-y-2">
                                                     <label className="text-xs font-bold text-white/70 uppercase tracking-widest">{t('register.country')}</label>
-                                                    <select name="bachelorCountry" value={formData.bachelorCountry} onChange={handleChange} className="w-full h-12 bg-[#0f172a] border border-white/10 rounded-xl px-4 text-white focus:border-btuCyan outline-none">
+                                                    <select name="bachelorCountry" value={formData.bachelorCountry} onChange={handleChange} className="w-full h-12 bg-[#0f172a] border border-white/10 rounded-xl px-4 text-white focus:border-btuCyan outline-none [color-scheme:dark]">
                                                         <option value="" disabled>Select Country</option>
                                                         {countries.map(c => <option key={c.id} value={c.id}>{c.name}</option>)}
                                                     </select>
@@ -823,7 +823,7 @@ export default function RegisterPage() {
                                                 </div>
                                                 <div className="space-y-2">
                                                     <label className="text-xs font-bold text-white/70 uppercase tracking-widest">{t('register.country')}</label>
-                                                    <select name="masterCountry" value={formData.masterCountry} onChange={handleChange} className="w-full h-12 bg-[#0f172a] border border-white/10 rounded-xl px-4 text-white focus:border-btuCyan outline-none">
+                                                    <select name="masterCountry" value={formData.masterCountry} onChange={handleChange} className="w-full h-12 bg-[#0f172a] border border-white/10 rounded-xl px-4 text-white focus:border-btuCyan outline-none [color-scheme:dark]">
                                                         <option value="" disabled>Select Country</option>
                                                         {countries.map(c => <option key={c.id} value={c.id}>{c.name}</option>)}
                                                     </select>

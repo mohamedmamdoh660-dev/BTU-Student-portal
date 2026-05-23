@@ -23,7 +23,7 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
             {/* Main Content Area */}
             <div className="flex-1 overflow-x-hidden overflow-y-auto relative">
                 <div className="absolute top-4 right-4 z-50 bg-white/80 backdrop-blur rounded-lg shadow-sm border border-slate-200">
-                    <LanguageSwitcher />
+                    <LanguageSwitcher variant="light" />
                 </div>
                 <main className="p-4 md:p-6 lg:p-8 w-full max-w-7xl mx-auto mt-12 md:mt-0">
                     {children}

@@ -5,9 +5,11 @@ import { useRouter } from "next/navigation";
 import { ArrowLeft, Loader2, BookOpen, Building, GraduationCap, Calendar, CheckCircle2, AlertCircle } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { supabase } from "@/lib/supabase";
+import { useLanguage } from "@/lib/i18n/LanguageContext";
 
 export default function AddApplicationPage() {
     const router = useRouter();
+    const { t, locale } = useLanguage();
     const [loading, setLoading] = useState(true);
     const [submitting, setSubmitting] = useState(false);
     const [error, setError] = useState("");
@@ -53,16 +55,16 @@ export default function AddApplicationPage() {
 
                 if (countError) throw countError;
                 if (count && count >= 3) {
-                    setError("You have reached the maximum limit of 3 applications. You cannot add more.");
+                    setError(t("dashboard.newApp.maxLimit") || "You have reached the maximum limit of 3 applications. You cannot add more.");
                     setLoading(false);
                     return;
                 }
 
                 // 2. Fetch Options
                 const [yearsRes, semestersRes, degreesRes] = await Promise.all([
-                    supabase.from('AcademicYear').select('id, name, isDefault').eq('isActive', true).order('name', { ascending: false }),
-                    supabase.from('Semester').select('id, name, isDefault').eq('isActive', true),
-                    supabase.from('Degree').select('id, name').eq('isActive', true).order('displayOrder', { ascending: true })
+                    supabase.from('AcademicYear').select('id, name, isDefault, translations').eq('isActive', true).order('name', { ascending: false }),
+                    supabase.from('Semester').select('id, name, isDefault, translations').eq('isActive', true),
+                    supabase.from('Degree').select('id, name, translations').eq('isActive', true).order('displayOrder', { ascending: true })
                 ]);
 
                 if (yearsRes.data) {
@@ -81,7 +83,7 @@ export default function AddApplicationPage() {
 
             } catch (err: any) {
                 console.error("Error fetching data:", err);
-                setError("Failed to load application options. Please try again.");
+                setError(t("dashboard.newApp.loadError") || "Failed to load application options. Please try again.");
             } finally {
                 setLoading(false);
             }
@@ -101,7 +103,7 @@ export default function AddApplicationPage() {
         const fetchPrograms = async () => {
             const { data, error } = await supabase
                 .from('Program')
-                .select('id, name, Faculty(name), Language(name)')
+                .select('id, name, translations, Faculty(name), Language(name, translations)')
                 .eq('degreeId', selectedDegree)
                 .eq('isActive', true)
                 .order('name');
@@ -118,7 +120,7 @@ export default function AddApplicationPage() {
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
         if (!selectedYear || !selectedDegree || !selectedProgram || !selectedPreference) {
-            setError("Please fill out all fields before submitting.");
+            setError(t("dashboard.newApp.fillAll") || "Please fill out all fields before submitting.");
             return;
         }
 
@@ -136,7 +138,7 @@ export default function AddApplicationPage() {
                 .limit(1);
 
             if (existingApps && existingApps.length > 0) {
-                setError("You have already applied for this exact program in this academic year.");
+                setError(t("dashboard.newApp.duplicateApp") || "You have already applied for this exact program in this academic year.");
                 setSubmitting(false);
                 return;
             }
@@ -150,7 +152,7 @@ export default function AddApplicationPage() {
                 .limit(1);
 
             if (existingPrefs && existingPrefs.length > 0) {
-                setError(`You have already submitted an application as your ${selectedPreference}${selectedPreference === '1' ? 'st' : selectedPreference === '2' ? 'nd' : 'rd'} preference.`);
+                setError(t("dashboard.newApp.duplicatePref") || `You have already submitted an application as your ${selectedPreference}${selectedPreference === '1' ? 'st' : selectedPreference === '2' ? 'nd' : 'rd'} preference.`);
                 setSubmitting(false);
                 return;
             }
@@ -183,7 +185,7 @@ export default function AddApplicationPage() {
 
         } catch (err: any) {
             console.error("Submit error:", err);
-            setError("An error occurred while submitting your application. Please try again.");
+            setError(t("dashboard.newApp.submitError") || "An error occurred while submitting your application. Please try again.");
             setSubmitting(false);
         }
     };
@@ -203,10 +205,10 @@ export default function AddApplicationPage() {
                     <div className="w-20 h-20 bg-emerald-100 text-emerald-600 rounded-full flex items-center justify-center mx-auto mb-6">
                         <CheckCircle2 className="w-10 h-10" />
                     </div>
-                    <h2 className="text-2xl font-black text-[#0a0f1e] mb-2 tracking-tight">Application Submitted!</h2>
-                    <p className="text-gray-500 font-medium mb-8">Your application has been successfully created and is now pending review.</p>
+                    <h2 className="text-2xl font-black text-[#0a0f1e] mb-2 tracking-tight">{t("dashboard.newApp.successTitle") || "Application Submitted!"}</h2>
+                    <p className="text-gray-500 font-medium mb-8">{t("dashboard.newApp.successDesc") || "Your application has been successfully created and is now pending review."}</p>
                     <Loader2 className="w-6 h-6 animate-spin text-btuCyan mx-auto" />
-                    <p className="text-sm text-gray-400 mt-4">Redirecting to dashboard...</p>
+                    <p className="text-sm text-gray-400 mt-4">{t("dashboard.newApp.redirecting") || "Redirecting to dashboard..."}</p>
                 </div>
             </div>
         );
@@ -217,8 +219,8 @@ export default function AddApplicationPage() {
             {/* Header Area */}
             <div className="flex items-center justify-between mb-2">
                 <div>
-                    <h1 className="text-3xl font-black text-[#0a0f1e] tracking-tight">New Application</h1>
-                    <p className="text-gray-500 mt-1 font-medium">Select your desired academic program.</p>
+                    <h1 className="text-3xl font-black text-[#0a0f1e] tracking-tight">{t("dashboard.newApp.title") || "New Application"}</h1>
+                    <p className="text-gray-500 mt-1 font-medium">{t("dashboard.newApp.subtitle") || "Select your desired academic program."}</p>
                 </div>
                 <Button 
                     onClick={() => router.push('/dashboard')}
@@ -226,7 +228,7 @@ export default function AddApplicationPage() {
                     className="border-gray-200 text-gray-600 hover:bg-gray-50 bg-white font-bold h-10 px-4 rounded-xl shadow-sm"
                 >
                     <ArrowLeft className="w-4 h-4 mr-2" />
-                    Back to Dashboard
+                    {t("dashboard.newApp.back") || "Back to Dashboard"}
                 </Button>
             </div>
 
@@ -243,7 +245,7 @@ export default function AddApplicationPage() {
                 <div className="bg-[#0a0f1e] px-8 py-5">
                     <div className="flex items-center gap-3 text-white">
                         <BookOpen className="w-5 h-5 text-btuCyan" />
-                        <h2 className="text-sm font-bold tracking-widest uppercase">Program Selection</h2>
+                        <h2 className="text-sm font-bold tracking-widest uppercase">{t("dashboard.newApp.programSelection") || "Program Selection"}</h2>
                     </div>
                 </div>
 
@@ -255,17 +257,17 @@ export default function AddApplicationPage() {
                             <div className="space-y-2">
                                 <label className="text-xs font-bold text-gray-500 tracking-wider uppercase flex items-center gap-2">
                                     <Calendar className="w-3.5 h-3.5 text-btuCyan" />
-                                    Academic Year
+                                    {t("dashboard.newApp.academicYear") || "Academic Year"}
                                 </label>
                                 <select 
                                     value={selectedYear}
                                     onChange={(e) => setSelectedYear(e.target.value)}
-                                    className="w-full h-12 bg-gray-50 border border-gray-200 rounded-xl px-4 text-sm font-semibold text-[#0a0f1e] focus:ring-2 focus:ring-btuCyan/20 focus:border-btuCyan outline-none transition-all disabled:opacity-50"
-                                    disabled={error.includes("maximum limit")}
+                                    className="w-full h-12 bg-gray-50 border border-gray-200 rounded-xl px-4 text-sm font-semibold text-[#0a0f1e] focus:ring-2 focus:ring-btuCyan/20 focus:border-btuCyan outline-none transition-all disabled:opacity-50 [color-scheme:light]"
+                                    disabled={error === t("dashboard.newApp.maxLimit") || error === "You have reached the maximum limit of 3 applications. You cannot add more."}
                                 >
-                                    <option value="" disabled>Select Year</option>
+                                    <option value="" disabled>{t("dashboard.newApp.selectYear") || "Select Year"}</option>
                                     {academicYears.map(y => (
-                                        <option key={y.id} value={y.id}>{y.name}</option>
+                                        <option key={y.id} value={y.id}>{y.translations?.[locale] || y.name}</option>
                                     ))}
                                 </select>
                             </div>
@@ -273,17 +275,17 @@ export default function AddApplicationPage() {
                             <div className="space-y-2">
                                 <label className="text-xs font-bold text-gray-500 tracking-wider uppercase flex items-center gap-2">
                                     <GraduationCap className="w-3.5 h-3.5 text-btuCyan" />
-                                    Degree Level
+                                    {t("dashboard.newApp.degreeLevel") || "Degree Level"}
                                 </label>
                                 <select 
                                     value={selectedDegree}
                                     onChange={(e) => setSelectedDegree(e.target.value)}
-                                    className="w-full h-12 bg-gray-50 border border-gray-200 rounded-xl px-4 text-sm font-semibold text-[#0a0f1e] focus:ring-2 focus:ring-btuCyan/20 focus:border-btuCyan outline-none transition-all disabled:opacity-50"
-                                    disabled={error.includes("maximum limit")}
+                                    className="w-full h-12 bg-gray-50 border border-gray-200 rounded-xl px-4 text-sm font-semibold text-[#0a0f1e] focus:ring-2 focus:ring-btuCyan/20 focus:border-btuCyan outline-none transition-all disabled:opacity-50 [color-scheme:light]"
+                                    disabled={error === t("dashboard.newApp.maxLimit") || error === "You have reached the maximum limit of 3 applications. You cannot add more."}
                                 >
-                                    <option value="" disabled>Select Degree</option>
+                                    <option value="" disabled>{t("dashboard.newApp.selectDegree") || "Select Degree"}</option>
                                     {degrees.map(d => (
-                                        <option key={d.id} value={d.id}>{d.name}</option>
+                                        <option key={d.id} value={d.id}>{d.translations?.[locale] || d.name}</option>
                                     ))}
                                 </select>
                             </div>
@@ -295,25 +297,25 @@ export default function AddApplicationPage() {
                         <div className="space-y-2">
                             <label className="text-xs font-bold text-gray-500 tracking-wider uppercase flex items-center gap-2">
                                 <Building className="w-3.5 h-3.5 text-btuCyan" />
-                                Program / Specialty
+                                {t("dashboard.newApp.programSpecialty") || "Program / Specialty"}
                             </label>
                             <select 
                                 value={selectedProgram}
                                 onChange={(e) => setSelectedProgram(e.target.value)}
-                                className="w-full h-12 bg-gray-50 border border-gray-200 rounded-xl px-4 text-sm font-semibold text-[#0a0f1e] focus:ring-2 focus:ring-btuCyan/20 focus:border-btuCyan outline-none transition-all disabled:opacity-50"
-                                disabled={!selectedDegree || error.includes("maximum limit")}
+                                className="w-full h-12 bg-gray-50 border border-gray-200 rounded-xl px-4 text-sm font-semibold text-[#0a0f1e] focus:ring-2 focus:ring-btuCyan/20 focus:border-btuCyan outline-none transition-all disabled:opacity-50 [color-scheme:light]"
+                                disabled={!selectedDegree || error === t("dashboard.newApp.maxLimit") || error === "You have reached the maximum limit of 3 applications. You cannot add more."}
                             >
                                 <option value="" disabled>
-                                    {!selectedDegree ? "Select a degree first" : programs.length === 0 ? "No programs available for this degree" : "Select Program"}
+                                    {!selectedDegree ? (t("dashboard.newApp.selectDegreeFirst") || "Select a degree first") : programs.length === 0 ? (t("dashboard.newApp.noPrograms") || "No programs available for this degree") : (t("dashboard.newApp.selectProgram") || "Select Program")}
                                 </option>
                                 {programs.map(p => (
                                     <option key={p.id} value={p.id}>
-                                        {p.name} {p.Language?.name ? `(${p.Language.name})` : ''} 
+                                        {p.translations?.[locale] || p.name} {p.Language?.name ? `(${p.Language.translations?.[locale] || p.Language.name})` : ''} 
                                     </option>
                                 ))}
                             </select>
                             {selectedDegree && programs.length === 0 && (
-                                <p className="text-xs text-orange-500 mt-2 font-medium">No active programs found for this degree level.</p>
+                                <p className="text-xs text-orange-500 mt-2 font-medium">{t("dashboard.newApp.noActivePrograms") || "No active programs found for this degree level."}</p>
                             )}
                         </div>
 
@@ -321,18 +323,18 @@ export default function AddApplicationPage() {
                         <div className="space-y-2">
                             <label className="text-xs font-bold text-gray-500 tracking-wider uppercase flex items-center gap-2">
                                 <AlertCircle className="w-3.5 h-3.5 text-btuCyan" />
-                                Preference Order
+                                {t("dashboard.newApp.preferenceOrder") || "Preference Order"}
                             </label>
                             <select 
                                 value={selectedPreference}
                                 onChange={(e) => setSelectedPreference(e.target.value)}
-                                className="w-full h-12 bg-gray-50 border border-gray-200 rounded-xl px-4 text-sm font-semibold text-[#0a0f1e] focus:ring-2 focus:ring-btuCyan/20 focus:border-btuCyan outline-none transition-all disabled:opacity-50"
-                                disabled={error.includes("maximum limit")}
+                                className="w-full h-12 bg-gray-50 border border-gray-200 rounded-xl px-4 text-sm font-semibold text-[#0a0f1e] focus:ring-2 focus:ring-btuCyan/20 focus:border-btuCyan outline-none transition-all disabled:opacity-50 [color-scheme:light]"
+                                disabled={error === t("dashboard.newApp.maxLimit") || error === "You have reached the maximum limit of 3 applications. You cannot add more."}
                             >
-                                <option value="" disabled>Select Preference Order</option>
-                                <option value="1">1st Preference (1. Tercih)</option>
-                                <option value="2">2nd Preference (2. Tercih)</option>
-                                <option value="3">3rd Preference (3. Tercih)</option>
+                                <option value="" disabled>{t("dashboard.newApp.selectPreference") || "Select Preference Order"}</option>
+                                <option value="1">{t("dashboard.newApp.pref1") || "1st Preference (1. Tercih)"}</option>
+                                <option value="2">{t("dashboard.newApp.pref2") || "2nd Preference (2. Tercih)"}</option>
+                                <option value="3">{t("dashboard.newApp.pref3") || "3rd Preference (3. Tercih)"}</option>
                             </select>
                         </div>
 
@@ -340,13 +342,13 @@ export default function AddApplicationPage() {
                         <div className="pt-4 border-t border-gray-100 flex justify-end">
                             <Button 
                                 type="submit" 
-                                disabled={submitting || error.includes("maximum limit")}
+                                disabled={submitting || error === t("dashboard.newApp.maxLimit") || error === "You have reached the maximum limit of 3 applications. You cannot add more."}
                                 className="bg-btuCyan hover:bg-[#088ba3] text-white h-12 px-8 rounded-xl font-bold shadow-lg shadow-btuCyan/20 transition-all min-w-[200px]"
                             >
                                 {submitting ? (
-                                    <><Loader2 className="w-4 h-4 mr-2 animate-spin" /> Submitting...</>
+                                    <><Loader2 className="w-4 h-4 mr-2 animate-spin" /> {t("dashboard.newApp.submitting") || "Submitting..."}</>
                                 ) : (
-                                    "Submit Application"
+                                    t("dashboard.newApp.submit") || "Submit Application"
                                 )}
                             </Button>
                         </div>
