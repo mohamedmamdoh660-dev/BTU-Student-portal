@@ -168,7 +168,7 @@ step1Desc: "Please provide your official identification details exactly as they 
       uploadHighSchool: "Upload High School Diploma",
       uploadTranscript: "Upload Transcript"
     },
-    dashboard: {\n
+    dashboard: {
       newApp: {
         title: "طلب جديد",
         subtitle: "حدد البرنامج الأكاديمي المطلوب.",
@@ -450,7 +450,7 @@ step1Desc: "Lütfen resmi kimlik bilgilerinizi pasaportunuzda göründüğü gib
       uploadHighSchool: "Lise Diploması Yükle",
       uploadTranscript: "Transkript Yükle"
     },
-    dashboard: {\n
+    dashboard: {
       newApp: {
         title: "Yeni Başvuru",
         subtitle: "İstediğiniz akademik programı seçin.",
@@ -952,7 +952,7 @@ step1Desc: "Veuillez fournir vos informations d'identité officielles exactement
       uploadHighSchool: "Télécharger le diplôme d'études secondaires",
       uploadTranscript: "Télécharger le relevé de notes"
     },
-    dashboard: {\n
+    dashboard: {
       newApp: {
         title: "Nouvelle Candidature",
         subtitle: "Sélectionnez votre programme académique souhaité.",
