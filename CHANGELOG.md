@@ -1,5 +1,8 @@
 # Changelog
 
+## [2026-06-02] - Registration Form Translations Fix - Localization
+- Updated English translation strings in `src/lib/i18n/translations.ts` for "Have Turkish T.C.?" to "Have Foreigner Identity Number ?" and "T.C. Number" to "Foreigner Identity Number".
+
 ## [2026-05-23] - Application Form Localization
 - Translated all UI labels, form options, error states, and submission messages on the "New Application" form into all supported languages (EN, TR, AR, FR, RU).
 - Updated the form's data-fetching logic to dynamically request and display the translated names for degrees, programs, academic years, and faculties, gracefully falling back to the English names if the specific translated string is empty.
