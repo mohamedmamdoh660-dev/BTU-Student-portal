@@ -44,7 +44,8 @@ interface RegisterFormState {
     hasTomer: string;
     highSchoolName: string;
     highSchoolCountry: string;
-    highSchoolType: string;
+    hasYos: "yes" | "no";
+    hasSat: "yes" | "no";
     yosDegree: string;
     satDegree: string;
     diplomaDegree: string;
@@ -86,7 +87,8 @@ const initialFormState: RegisterFormState = {
     hasTomer: "Hayır",
     highSchoolName: "",
     highSchoolCountry: "",
-    highSchoolType: "Diploma",
+    hasYos: "no",
+    hasSat: "no",
     yosDegree: "",
     satDegree: "",
     diplomaDegree: "",
@@ -149,9 +151,14 @@ export default function RegisterPage() {
     }, []);
 
     const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>) => {
+        const nameFields = ["firstName", "lastName", "fatherName", "motherName", "highSchoolName", "bachelorSchoolName", "masterSchoolName"];
+        let value = e.target.value;
+        if (nameFields.includes(e.target.name)) {
+            value = value.toUpperCase();
+        }
         setFormData(prev => ({
             ...prev,
-            [e.target.name]: e.target.value
+            [e.target.name]: value
         }));
     };
 
@@ -253,15 +260,15 @@ export default function RegisterPage() {
             setError("High School Details are required.");
             return false;
         }
-        if (formData.highSchoolType === "Diploma" && !formData.highSchoolGpa) {
+        if (!formData.highSchoolGpa) {
             setError("Diploma Grade is required.");
             return false;
         }
-        if (formData.highSchoolType === "TR-YÖS" && !formData.yosDegree) {
+        if (formData.hasYos === "yes" && !formData.yosDegree) {
             setError("TR-YÖS Degree is required.");
             return false;
         }
-        if (formData.highSchoolType === "SAT" && !formData.satDegree) {
+        if (formData.hasSat === "yes" && !formData.satDegree) {
             setError("SAT Degree is required.");
             return false;
         }
@@ -298,9 +305,9 @@ export default function RegisterPage() {
 
     const getDocumentRequiredList = () => {
         const requiredDocs = ['personal_photo', 'passport_copy', 'high_school_transcript'];
-        if (formData.highSchoolType === 'Diploma') requiredDocs.push('high_school_certificate');
-        if (formData.highSchoolType === 'TR-YÖS') requiredDocs.push('yos_certificate');
-        if (formData.highSchoolType === 'SAT') requiredDocs.push('sat_certificate');
+        requiredDocs.push('high_school_certificate');
+        if (formData.hasYos === 'yes') requiredDocs.push('yos_certificate');
+        if (formData.hasSat === 'yes') requiredDocs.push('sat_certificate');
         if (formData.hasTomer && formData.hasTomer !== 'Hayır') requiredDocs.push('tomer_certificate');
         return requiredDocs;
     };
@@ -393,7 +400,7 @@ export default function RegisterPage() {
                     hasTomer: formData.hasTomer,
                     highSchoolName: formData.highSchoolName,
                     highSchoolCountry: formData.highSchoolCountry,
-                    highSchoolType: formData.highSchoolType,
+                    highSchoolType: ["Diploma", formData.hasYos === 'yes' ? "TR-YÖS" : "", formData.hasSat === 'yes' ? "SAT" : ""].filter(Boolean).join(", "),
                     yosDegree: formData.yosDegree,
                     satDegree: formData.satDegree,
                     diplomaDegree: formData.diplomaDegree,
@@ -748,28 +755,38 @@ export default function RegisterPage() {
 
 
                                         <div className="space-y-2">
-                                            <label className="text-xs font-bold text-white/70 uppercase tracking-widest">{t('register.highSchoolType')} *</label>
-                                            <select name="highSchoolType" value={formData.highSchoolType} onChange={handleChange} className="w-full h-12 bg-[#0f172a] border border-white/10 rounded-xl px-4 text-white focus:border-btuCyan outline-none [color-scheme:dark]">
-                                                <option value="Diploma">Diploma</option>
-                                                <option value="TR-YÖS">TR-YÖS</option>
-                                                <option value="SAT">SAT</option>
-                                            </select>
+                                            <label className="text-xs font-bold text-white/70 uppercase tracking-widest">{t('register.diplomaGradeExample')} *</label>
+                                            <input name="highSchoolGpa" value={formData.highSchoolGpa} onChange={handleChange} className="w-full h-12 bg-white/5 border border-white/10 rounded-xl px-4 text-white focus:border-btuCyan outline-none" />
                                         </div>
 
-                                        {formData.highSchoolType === 'Diploma' && (
-                                            <div className="space-y-2">
-                                                <label className="text-xs font-bold text-white/70 uppercase tracking-widest">{t('register.diplomaGradeExample')} *</label>
-                                                <input name="highSchoolGpa" value={formData.highSchoolGpa} onChange={handleChange} className="w-full h-12 bg-white/5 border border-white/10 rounded-xl px-4 text-white focus:border-btuCyan outline-none" />
+                                        <div className="space-y-2">
+                                            <label className="text-xs font-bold text-white/70 uppercase tracking-widest">{t('register.hasYos')} *</label>
+                                            <div className="flex gap-4">
+                                                <label className="flex items-center gap-2 text-white/80 cursor-pointer">
+                                                    <input type="radio" name="hasYos" checked={formData.hasYos === "yes"} onChange={() => handleRadio("hasYos", "yes")} className="accent-btuCyan" /> {t('register.yes')}</label>
+                                                <label className="flex items-center gap-2 text-white/80 cursor-pointer">
+                                                    <input type="radio" name="hasYos" checked={formData.hasYos === "no"} onChange={() => handleRadio("hasYos", "no")} className="accent-btuCyan" /> {t('register.no')}</label>
                                             </div>
-                                        )}
+                                        </div>
 
-                                        {formData.highSchoolType === 'TR-YÖS' && (
+                                        {formData.hasYos === 'yes' && (
                                             <div className="space-y-2">
                                                 <label className="text-xs font-bold text-white/70 uppercase tracking-widest">{t('register.trYosDegree')} *</label>
                                                 <input name="yosDegree" value={formData.yosDegree} onChange={handleChange} className="w-full h-12 bg-white/5 border border-white/10 rounded-xl px-4 text-white focus:border-btuCyan outline-none" />
                                             </div>
                                         )}
-                                        {formData.highSchoolType === 'SAT' && (
+
+                                        <div className="space-y-2">
+                                            <label className="text-xs font-bold text-white/70 uppercase tracking-widest">{t('register.hasSat')} *</label>
+                                            <div className="flex gap-4">
+                                                <label className="flex items-center gap-2 text-white/80 cursor-pointer">
+                                                    <input type="radio" name="hasSat" checked={formData.hasSat === "yes"} onChange={() => handleRadio("hasSat", "yes")} className="accent-btuCyan" /> {t('register.yes')}</label>
+                                                <label className="flex items-center gap-2 text-white/80 cursor-pointer">
+                                                    <input type="radio" name="hasSat" checked={formData.hasSat === "no"} onChange={() => handleRadio("hasSat", "no")} className="accent-btuCyan" /> {t('register.no')}</label>
+                                            </div>
+                                        </div>
+
+                                        {formData.hasSat === 'yes' && (
                                             <div className="space-y-2">
                                                 <label className="text-xs font-bold text-white/70 uppercase tracking-widest">{t('register.satDegreeLabel')} *</label>
                                                 <input name="satDegree" value={formData.satDegree} onChange={handleChange} className="w-full h-12 bg-white/5 border border-white/10 rounded-xl px-4 text-white focus:border-btuCyan outline-none" />
@@ -878,7 +895,7 @@ export default function RegisterPage() {
                                     <div className="bg-white/5 rounded-xl border border-white/10 p-4">
                                         <FileUpload
                                             label={t('register.docHighSchoolCert')}
-                                            required={formData.highSchoolType === 'Diploma'}
+                                            required={true}
                                             accept="image/*,application/pdf"
                                             currentFile={documents.find(d => d.type === 'high_school_certificate') ? {
                                                 fileName: documents.find(d => d.type === 'high_school_certificate').file.name,
@@ -933,7 +950,7 @@ export default function RegisterPage() {
                                         </>
                                     )}
 
-                                    {formData.highSchoolType === 'TR-YÖS' && (
+                                    {formData.hasYos === 'yes' && (
                                         <div className="bg-white/5 rounded-xl border border-white/10 p-4">
                                             <FileUpload
                                                 label="TR-YÖS Certificate"
@@ -949,7 +966,7 @@ export default function RegisterPage() {
                                         </div>
                                     )}
 
-                                    {formData.highSchoolType === 'SAT' && (
+                                    {formData.hasSat === 'yes' && (
                                         <div className="bg-white/5 rounded-xl border border-white/10 p-4">
                                             <FileUpload
                                                 label="SAT Certificate"
